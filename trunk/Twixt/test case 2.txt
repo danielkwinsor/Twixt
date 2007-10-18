@@ -1,0 +1,8 @@
+6
+3 C W
+5 H W
+6 J W
+4 B B
+6 C B
+8 D B
+1 D

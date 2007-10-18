@@ -1,0 +1,9 @@
+7
+2 E B
+7 E B
+7 J B
+9 K B
+3 E W
+5 J W
+6 L W
+2 F
