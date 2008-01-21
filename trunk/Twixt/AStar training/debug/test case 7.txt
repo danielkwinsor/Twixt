@@ -1,0 +1,10 @@
+T
+4 C W
+3 E W
+7 F W
+5 F B
+1 L B
+8 E B
+10 D B
+12 J B END
+6 H 1

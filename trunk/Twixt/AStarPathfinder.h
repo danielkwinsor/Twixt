@@ -39,8 +39,7 @@ public:
 	AStarPathfinder();
 	AStarPathfinder(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 		int const XBoardSize,
-		int const YBoardSize)
-		: CBoardManager(SharedBoard, XBoardSize, YBoardSize) {return;};
+		int const YBoardSize);
 
 	vector<MYPoint>			ClosedList;
 	CBinaryHeap<MYPoint>		OpenHeap;
@@ -72,6 +71,16 @@ public:
 	int		CountDoubles	(const MYPoint& Peg,
 							ePlayer const player);
 
+	float	currentAStarWeightsScore;//0.0
+	float	bestAStarWeightsScore;//0.0
+
+	void	LoadAStarWeights	();
+	void	SaveAStarWeights	();
+	void	PerturbAStarWeights	();
+
+	void	LoadAStarWeightsFromBackup(std::vector<std::vector<int>>& weights);
+	void	SaveAStarWeightsToBackup(std::vector<std::vector<int>>& weights);
+
 private:
 	bool	ExecuteAStarLogic(const MYPoint& Source,
 							 const MYPoint& DestForCalcH,
@@ -93,10 +102,13 @@ private:
 							eSides const DestSide);
 
 	int		GetAStarLinkWeight	();
-
 	int		GetAStarBlockWeight	();
+	int		GetAStarDoubleSetupWeight	();
 
-	int		GetAStarSetupWeight	();
+public://sorry but must be public
+	void	SetAStarLinkWeight	(int const newLinkWeight);
+	void	SetAStarBlockWeight	(int const newBlockWeight);
+	void	SetAStarDoubleSetupWeight	(int const newDoubleWeight);
 
 };
 

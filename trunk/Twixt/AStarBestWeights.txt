@@ -1,0 +1,4 @@
+10 = bestAStarWeightsScore
+500 = linksWeight
+200 = blocksWeight
+200 = doubleWeight

@@ -20,9 +20,10 @@ AILogic::AILogic(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 
 void AILogic::LoadAIWeights()
 {
-	ifstream weights("aiweights.txt");
+	ifstream weights("AIBestWeights.txt");
 	if (weights) {
 		char temp[128];
+		weights >> bestAIWeightsScore; weights.getline(temp, 128);
 		weights >> NUMTURNSINHISTORY; weights.getline(temp, 128);
 		weights >> baseDefenseWeight; weights.getline(temp, 128);
 		weights >> baseOffenseWeight; weights.getline(temp, 128);
@@ -38,6 +39,7 @@ void AILogic::LoadAIWeights()
 		weights >> offDoesntBlockOpponent; weights.getline(temp, 128);
 	}
 	else {
+		bestAIWeightsScore = 0.0f;
 		NUMTURNSINHISTORY = 2;//2
 		baseDefenseWeight = 1.0f;//1.0
 		baseOffenseWeight = 1.0f;//1.0
@@ -54,6 +56,83 @@ void AILogic::LoadAIWeights()
 	}
 	return;
 }//end LoadAIWeights
+
+void AILogic::SaveAIWeights()
+{
+	if (currentAIWeightsScore > bestAIWeightsScore) {
+		ofstream weights("AIBestWeights.txt");
+		bestAIWeightsScore = currentAIWeightsScore;
+
+		weights << currentAIWeightsScore << " = bestAIWeightsScore\n";
+
+		weights << NUMTURNSINHISTORY << " = NUMTURNSINHISTORY\n";
+		weights << baseDefenseWeight << " = baseDefenseWeight\n";
+		weights << baseOffenseWeight << " = baseOffenseWeight\n";
+		weights << offRiskyDoubleJump << " = offRiskyDoubleJump\n";
+		weights << defHasNoLinks << " = defHasNoLinks\n";
+		weights << defIsStartPeg << " = defIsStartPeg\n";
+		weights << defCantBlockLink << " = defCantBlockLink\n";
+		weights << defEndBlock << " = defEndBlock\n";
+		weights << defEndBlockStraight << " = defEndBlockStraight\n";
+		weights << defBlocks1JumpLink << " = defBlocks1JumpLink\n";
+		weights << defBlocks2JumpLink << " = defBlocks2JumpLink\n";
+		weights << defBlocks3JumpLink << " = defBlocks3JumpLink\n";
+		weights << offDoesntBlockOpponent << " = offDoesntBlockOpponent\n";
+	}
+	else {
+		ofstream weights("AICurrentWeights.txt");
+
+		weights << currentAIWeightsScore << " = currentAIWeightsScore\n";
+
+		weights << NUMTURNSINHISTORY << " = NUMTURNSINHISTORY\n";
+		weights << baseDefenseWeight << " = baseDefenseWeight\n";
+		weights << baseOffenseWeight << " = baseOffenseWeight\n";
+		weights << offRiskyDoubleJump << " = offRiskyDoubleJump\n";
+		weights << defHasNoLinks << " = defHasNoLinks\n";
+		weights << defIsStartPeg << " = defIsStartPeg\n";
+		weights << defCantBlockLink << " = defCantBlockLink\n";
+		weights << defEndBlock << " = defEndBlock\n";
+		weights << defEndBlockStraight << " = defEndBlockStraight\n";
+		weights << defBlocks1JumpLink << " = defBlocks1JumpLink\n";
+		weights << defBlocks2JumpLink << " = defBlocks2JumpLink\n";
+		weights << defBlocks3JumpLink << " = defBlocks3JumpLink\n";
+		weights << offDoesntBlockOpponent << " = offDoesntBlockOpponent\n";
+
+	}
+	return;
+}//end SaveAIWeights
+
+void AILogic::PerturbAIWeights()
+{
+	baseDefenseWeight *= (((rand()%2000) * 0.0002f) + 0.9f);
+	baseOffenseWeight *= (((rand()%2000) * 0.0002f) + 0.9f);
+	offRiskyDoubleJump *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defHasNoLinks *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defIsStartPeg *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defCantBlockLink *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defEndBlock *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defEndBlockStraight *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defBlocks1JumpLink *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defBlocks2JumpLink *= (((rand()%2000) * 0.0002f) + 0.9f);
+	defBlocks3JumpLink *= (((rand()%2000) * 0.0002f) + 0.9f);
+	offDoesntBlockOpponent *= (((rand()%2000) * 0.0002f) + 0.9f);
+
+
+	if (baseDefenseWeight < 0.2f || baseDefenseWeight > 4.0f) baseDefenseWeight = 1.0f;
+	if (baseOffenseWeight < 0.2f || baseOffenseWeight > 4.0f) baseOffenseWeight = 1.0f;
+	if (offRiskyDoubleJump < 0.2f || offRiskyDoubleJump > 4.0f) offRiskyDoubleJump = 0.8f;
+	if (defHasNoLinks < 0.2f || defHasNoLinks > 4.0f) defHasNoLinks = 0.8f;
+	if (defIsStartPeg < 0.2f || defIsStartPeg > 4.0f) defIsStartPeg = 0.8f;
+	if (defCantBlockLink < 0.2f || defCantBlockLink > 4.0f) defCantBlockLink = 0.35f;
+	if (defEndBlock < 0.2f || defEndBlock > 4.0f) defEndBlock = 0.8f;
+	if (defEndBlockStraight < 0.2f || defEndBlockStraight > 4.0f) defEndBlockStraight = 0.9f;
+	if (defBlocks1JumpLink < 0.2f || defBlocks1JumpLink > 4.0f) defBlocks1JumpLink = 1.25f;
+	if (defBlocks2JumpLink < 0.2f || defBlocks2JumpLink > 4.0f) defBlocks2JumpLink = 0.85f;
+	if (defBlocks3JumpLink < 0.2f || defBlocks3JumpLink > 4.0f) defBlocks3JumpLink = 1.05f;
+	if (offDoesntBlockOpponent < 0.2f || offDoesntBlockOpponent > 4.0f) offDoesntBlockOpponent = 0.9f;
+
+	return;
+}//end PerturbAIWeights
 
 void AILogic::UndoTurn()
 {
@@ -126,10 +205,12 @@ int AILogic::GetBestPath(ePlayer const player,
 	bool completeSearch = true;
 	bool buildPathList = false;
 
-	pThreadManager->PushAStarData(ThreadInput(StartPeg, DestPeg, destSide, player,
+	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
+		StartPeg, DestPeg, destSide, player,
 		true, JumpStartData(startSide, DestPeg, player),
 		completeSearch, 1, buildPathList, currentPlayer));
-	pThreadManager->PushAStarData(ThreadInput(DestPeg, StartPeg, startSide, player,
+	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
+		DestPeg, StartPeg, startSide, player,
 		true, JumpStartData(destSide, StartPeg, player),
 		completeSearch, 1, buildPathList, currentPlayer));
 
@@ -157,10 +238,10 @@ int AILogic::GetBestPath(ePlayer const player,
 			LinkGroupList.push_back(linkGroup);
 
 			//find the paths from this peg to the 2 sides
-			pThreadManager->PushAStarData(ThreadInput(Peg, DestPeg, destSide, player,
+			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, DestPeg, destSide, player,
 				jumpStartAStar, JumpStartData(), completeSearch, 1, buildPathList, currentPlayer));
 
-			pThreadManager->PushAStarData(ThreadInput(Peg, StartPeg, startSide, player,
+			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, StartPeg, startSide, player,
 				jumpStartAStar, JumpStartData(), completeSearch, 2, buildPathList, currentPlayer));
 		}
 	}
@@ -400,7 +481,7 @@ MYPoint AILogic::GetBestPeg(const vector<MYPoint>& pegs,
 		heap.insertElement(peg, value);
 	}
 
-	return heap.popTopHeap().data;
+	return heap.peekTopHeap().data;
 }//end GetBestPeg
 
 int AILogic::CanPathBeBlocked(const CPath& path,
@@ -429,9 +510,6 @@ int AILogic::EvaluatePeg(const MYPoint& Peg,
 	//assumes link is valid
 	int links = CountLinks(Peg, player);
 	int setup = CountDoubles(Peg, player);
-	if (Peg == MYPoint(7,9)) {
-		int aoeu = 1;
-	}
 
 	int cost = (links * GetLinksWeight() + setup * GetSetupWeight());
 	if (cost == 0) {
@@ -672,12 +750,56 @@ int AILogic::CountTurnsToComplete(const CPath& path,
 	return turns;
 }//end CountTurnsToComplete
 
+void AILogic::FindPathAndEval(ePlayer const player,
+							  std::vector<CSolution>& solutions)
+{
+	currentPlayer = player;
+	eSides sides;
+	eSides startSide;
+	eSides destSide;
+	MYPoint DestPeg;
+	MYPoint StartPeg;
+	vector<MYPoint>* pPegList;
+	GetStartData(player, StartPeg, DestPeg, startSide, destSide, &pPegList);
+	isSideValid(player, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
+
+	CPath path;
+	GetBestPath(player, &path);
+	path.OrderPath(sides);
+	if (path.empty() == true) {
+		return;
+	}
+
+	std::vector<MYPoint> pegs;
+	for each (CLink link in path) {
+		pegs.push_back(link.startPeg);
+		if (link.IsDouble() == true) {
+			pegs.push_back(link.GetIntPeg(LEFT));
+			if (link.IsDoubleStraight() == false) {
+				pegs.push_back(link.GetIntPeg(RIGHT));
+			}
+		}
+	}
+	pegs.push_back(path.back().GetDestFromDir());
+
+	//evaluate the path, do we have any of the solutions in it?
+	float bestWeightsScore = 0.0f;
+	for each (CSolution solution in solutions) {
+		if (find(pegs.begin(), pegs.end(), solution.solution) != pegs.end()) {
+			if (solution.solutionWeight > bestWeightsScore) {
+				bestWeightsScore = solution.solutionWeight;
+			}
+		}
+	}
+	currentWeightsScore += bestWeightsScore;
+	return;
+}//end FindPathAndEval
+
 void AILogic::DoTurn(MYPoint* Dest,
 					 ePlayer const player,
 					 ePlayer const opponent)
 {
 	PERFORMANCE_MARKER
-	LoadAIWeights();
 	currentPlayer = player;
 	CPath enemyPath;
 	eSides sides;
@@ -724,7 +846,27 @@ void AILogic::DoTurn(MYPoint* Dest,
 	*Dest = GetBestPeg(pegs, values);
 
 	return;
-}//end DoTurn
+}
+
+void AILogic::DoTurnAndEval(MYPoint* Dest,
+							ePlayer const player,
+							ePlayer const opponent,
+							std::vector<CSolution>& solutions)
+{
+	DoTurn(Dest, player, opponent);
+	if (solutions.empty() == false) {
+		int bestScore = heap.peekTopHeap().key;
+		while (heap.size()) {
+			HEAP<MYPoint> bestPoint = heap.popTopHeap();
+			for each (CSolution solution in solutions) {
+				if (bestPoint.data == solution.solution) {
+					currentWeightsScore += solution.solutionWeight * bestPoint.key / bestScore;
+				}
+			}
+		}
+	}
+	return;
+}//end DoTurnAndEval
 
 bool AILogic::CheckForWin(ePlayer const player)
 {
@@ -847,9 +989,6 @@ void AILogic::EvaluateDefenseLogic(const MYPoint& peg,
 			found = true;
 			break;
 		}
-	}
-	if (peg == MYPoint(7,9) || peg == MYPoint(8,9)) {
-		int aoeu = 1 ;
 	}
 	int weight = GetDefenseJumpTypeWeight(link.jump.jumpType);
 	float modifier = -20.0f;

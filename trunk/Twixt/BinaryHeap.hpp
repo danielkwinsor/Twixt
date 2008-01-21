@@ -112,7 +112,6 @@ public:
 
 	int moveUp(register int index, int newKey)
 	{
-		int breakpoint = 0;
 		while (index > 1) {
 			int current2 = index>>1;//divided by 2
 			if (BinaryHeap[current2].key > newKey) {

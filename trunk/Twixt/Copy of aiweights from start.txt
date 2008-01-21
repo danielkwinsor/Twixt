@@ -1,0 +1,14 @@
+0.0f = bestWeightsScore
+2 = NUMTURNSINHISTORY
+1.0f = baseDefenseWeight
+1.0f = baseOffenseWeight
+0.8f = offRiskyDoubleJump
+0.8f = defHasNoLinks
+0.8f = defIsStartPeg
+0.35f = defCantBlockLink
+0.8f = defEndBlock
+0.9f = defEndBlockStraight
+1.25f = defBlocks1JumpLink
+0.85f = defBlocks2JumpLink
+1.05f = defBlocks3JumpLink
+0.9f = offDoesntBlockOpponent

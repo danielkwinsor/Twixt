@@ -1,0 +1,50 @@
+9.5 = tiedAStarWeightsScore
+1083 = linksWeight
+945 = blocksWeight
+1424 = doubleWeight
+
+9.5 = tiedAStarWeightsScore
+482 = linksWeight
+1069 = blocksWeight
+1209 = doubleWeight
+
+9.9 = tiedAStarWeightsScore
+49 = linksWeight
+313 = blocksWeight
+1079 = doubleWeight
+
+9 = tiedAStarWeightsScore
+57 = linksWeight
+438 = blocksWeight
+815 = doubleWeight
+
+9 = tiedAStarWeightsScore
+3288 = linksWeight
+72 = blocksWeight
+13 = doubleWeight
+
+9 = tiedAStarWeightsScore
+2310 = linksWeight
+16 = blocksWeight
+167 = doubleWeight
+
+9 = tiedAStarWeightsScore
+2286 = linksWeight
+15 = blocksWeight
+148 = doubleWeight
+
+9.9 = tiedAStarWeightsScore
+97 = linksWeight
+415 = blocksWeight
+1124 = doubleWeight
+
+9 = tiedAStarWeightsScore
+242 = linksWeight
+202 = blocksWeight
+857 = doubleWeight
+
+10.9 = bestAStarWeightsScore
+113 = linksWeight
+84 = blocksWeight
+1283 = doubleWeight
+

@@ -6,6 +6,7 @@
 #define DEBUG
 #define PROFILE
 
+
 #define NUMDIRS 8
 enum eDir
 {
@@ -48,6 +49,9 @@ enum ePlayer
 	CurrentlyUnowned,
 	LinkableByAny,
 	AnyPlayer,
+	Green,
+	Blue,
+	Yellow,
 	NOTAPLAYER
 };
 
@@ -160,7 +164,7 @@ HEAP<MYPoint> GetBestPegFromHeap(CBinaryHeap<MYPoint>& heap,
 #define DEFAULTNUMTHREADS	2
 #define DEFAULTDIFFICULTY	Dif_Medium
 #define NUMDIRS			8
-#define ONEJUMP			67
+#define ONEJUMP			6700
 #define HALFJUMP		ONEJUMP/2
 #define TWOJUMPS		ONEJUMP*2
 

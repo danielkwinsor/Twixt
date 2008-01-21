@@ -126,20 +126,20 @@ void PerfManager::log(std::ostream &os)
 {
     //Create a copy of the log that sorts by cycles used
     std::set<PerfDatum, PerfSort2> logCopy;
-    for(PERF_LOG_T::iterator i = _perfLog.begin(); i != _perfLog.end(); i++)
+    for(PERF_LOG_T::iterator i = _perfLog.begin(); i != _perfLog.end(); ++i)
     {
         logCopy.insert(*i);
     }
     //Stream the sorted log to the supplied ostream
     for(std::set<PerfDatum, PerfSort2>::iterator i = logCopy.begin(); 
         i != logCopy.end(); 
-        i++)
+        ++i)
     {
         if(i->_lineNumber)
         {   //Truncate path from file name if the compiler included it.
             const char* j = i->_fileName + strlen(i->_fileName);
             while('\\' != *j && '/' != *j && j >= i->_fileName){j--;}
-            if('\\' == *j || '/' == *j){j++;}
+            if('\\' == *j || '/' == *j){++j;}
             os << "[";
             os.width(12);
             os << i->_cycles << "]";

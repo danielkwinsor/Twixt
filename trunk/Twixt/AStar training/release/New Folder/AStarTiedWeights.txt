@@ -1,0 +1,20 @@
+9.5 = tiedAStarWeightsScore
+592 = linksWeight
+1206 = blocksWeight
+1173 = doubleWeight
+
+11.6 = bestAStarWeightsScore
+1031 = linksWeight
+787 = blocksWeight
+1162 = doubleWeight
+
+10.6 = tiedAStarWeightsScore
+41 = linksWeight
+430 = blocksWeight
+220 = doubleWeight
+
+10.6 = tiedAStarWeightsScore
+1044 = linksWeight
+279 = blocksWeight
+30 = doubleWeight
+

@@ -813,6 +813,7 @@ void CBoardManager::ClearPegList()
 {
 	verticalPlayerPegs.clear();
 	horizontalPlayerPegs.clear();
+	LinkGroups.clear();
 	return;
 }//end ClearPegList
 

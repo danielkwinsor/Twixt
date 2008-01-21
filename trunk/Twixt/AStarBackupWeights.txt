@@ -1,0 +1,100 @@
+11 = backupBestAStarWeightsScore
+500 = backupLinksWeight
+200 = backupBlocksWeight
+200 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4418 = backupLinksWeight
+923 = backupBlocksWeight
+290 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+3259 = backupLinksWeight
+1587 = backupBlocksWeight
+200 = backupDoubleWeight
+
+13 = backupBestAStarWeightsScore
+595 = backupLinksWeight
+1745 = backupBlocksWeight
+654 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+3222 = backupLinksWeight
+1589 = backupBlocksWeight
+283 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+2750 = backupLinksWeight
+1923 = backupBlocksWeight
+341 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4317 = backupLinksWeight
+1135 = backupBlocksWeight
+200 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4457 = backupLinksWeight
+1126 = backupBlocksWeight
+233 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4183 = backupLinksWeight
+1080 = backupBlocksWeight
+251 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4741 = backupLinksWeight
+603 = backupBlocksWeight
+282 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4070 = backupLinksWeight
+1051 = backupBlocksWeight
+406 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4260 = backupLinksWeight
+973 = backupBlocksWeight
+452 = backupDoubleWeight
+
+13 = backupBestAStarWeightsScore
+883 = backupLinksWeight
+1353 = backupBlocksWeight
+590 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+5414 = backupLinksWeight
+610 = backupBlocksWeight
+248 = backupDoubleWeight
+
+13 = backupBestAStarWeightsScore
+6389 = backupLinksWeight
+3757 = backupBlocksWeight
+490 = backupDoubleWeight
+
+10 = backupBestAStarWeightsScore
+500 = backupLinksWeight
+3894 = backupBlocksWeight
+1010 = backupDoubleWeight
+
+10 = backupBestAStarWeightsScore
+777 = backupLinksWeight
+3874 = backupBlocksWeight
+1169 = backupDoubleWeight
+
+10 = backupBestAStarWeightsScore
+1025 = backupLinksWeight
+3206 = backupBlocksWeight
+504 = backupDoubleWeight
+
+13 = backupBestAStarWeightsScore
+7958 = backupLinksWeight
+3469 = backupBlocksWeight
+478 = backupDoubleWeight
+
+14 = backupBestAStarWeightsScore
+4728 = backupLinksWeight
+3961 = backupBlocksWeight
+513 = backupDoubleWeight
+

@@ -1,0 +1,65 @@
+9.5 = tiedAStarWeightsScore
+592 = linksWeight
+1206 = blocksWeight
+1173 = doubleWeight
+
+11.6 = bestAStarWeightsScore
+1031 = linksWeight
+787 = blocksWeight
+1162 = doubleWeight
+
+10.6 = tiedAStarWeightsScore
+41 = linksWeight
+430 = blocksWeight
+220 = doubleWeight
+
+10.6 = tiedAStarWeightsScore
+1044 = linksWeight
+279 = blocksWeight
+30 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+426 = linksWeight
+1347 = blocksWeight
+1188 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+385 = linksWeight
+1450 = blocksWeight
+1130 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+360 = linksWeight
+1393 = blocksWeight
+1179 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+300 = linksWeight
+1431 = blocksWeight
+1221 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+325 = linksWeight
+1348 = blocksWeight
+1258 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+297 = linksWeight
+1209 = blocksWeight
+1325 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+278 = linksWeight
+1080 = blocksWeight
+1299 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+101 = linksWeight
+1220 = blocksWeight
+1501 = doubleWeight
+
+8.5 = tiedAStarWeightsScore
+81 = linksWeight
+942 = blocksWeight
+1296 = doubleWeight
+

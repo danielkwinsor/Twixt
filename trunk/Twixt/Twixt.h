@@ -4,6 +4,13 @@
 
 #include "stdafx.h"
 
+class CMainWindow;
+void	TrainAStarWeights	(CMainWindow* pMainWindow);
+void	TrainAIWeights		(CMainWindow* pMainWindow);
+
+extern bool currentlyTrainingAStarWeights;
+extern bool currentlyTrainingAIWeights;
+
 class CTwixtGame : public CWinApp
 {
 public:
@@ -15,6 +22,9 @@ private:
 
 class CMainWindow : public CFrameWnd
 {
+public:
+	friend void TrainAStarWeights(CMainWindow* pMainWindow);
+	friend void TrainAIWeights(CMainWindow* pMainWindow);
 private:
 	AILogic*			pMainAI;
 	CThreadManager*		pThreadManager;
@@ -36,6 +46,7 @@ protected:
     afx_msg void OnWindowDefault ();
     afx_msg void OnWindowBoard ();
     afx_msg void OnWindowScreen ();
+	afx_msg void OnKeyDown (UINT nChar, UINT nRepeatCount, UINT nFlags);
 	afx_msg void OnLButtonDown (UINT nFlags, CPoint mousePoint);
 	afx_msg void OnRButtonDown (UINT nFlags, CPoint mousePoint);
     DECLARE_MESSAGE_MAP ()
@@ -67,7 +78,14 @@ private:
 	CBrush lightGray;
 	CPen bluePen;
 	CBrush blueBrush;
+	CPen yellowPen;
+	CBrush yellowBrush;
 	CBrush backgroundBrush;
+
+	//for viewing history
+	std::vector<CPeg>	historyPegs;
+	int					historyIndex;
+
 
 	void	StartNewGame		(int const XBoardSize,
 								int const YBoardSize,
@@ -95,7 +113,7 @@ private:
 
 	void	DrawBestPath		(const MYPoint& LastPeg);
 
-	void	DrawDebug			();
+	void	DrawDebug			(std::vector<CPeg>* pPegsToDrawSpecial = 0);
 	
 	void	DrawParentLink		(const MYPoint& Source,
 								CPen* pen,
@@ -122,12 +140,45 @@ private:
 	void	DecrementTurn		();
 	void	DoTurn				();
 
-	void	LoadTestCase		(int testCase);
+	void	SaveHistory			(bool const skipLastEntry);
 
-	void	DebugLoadHistory	();
+	void	RetestAStarWeights	();
+	void	RetestAIWeights		();
+
+	void	ViewTestCase		(int testCase);
+	void	ViewSavedHistory	(int number);
+
+	void	ExecuteAITestCase	(int sizeOfBoard,
+								ePlayer player,
+								ePlayer opponent,
+								std::vector<CPeg>& pegsToInsert,
+								std::vector<CSolution>& solutions,
+								MYPoint& Dest);
+
+	void	ExecuteAStarTestCase(int sizeOfBoard,
+								ePlayer player,
+								ePlayer opponent,
+								std::vector<CPeg>& pegsToInsert,
+								std::vector<CSolution>& solutions);
+
+
+	void	LoadTestCase		(int testCase,
+								ePlayer& player,
+								ePlayer& opponent,
+								std::vector<CPeg>& pegsToInsert,
+								std::vector<CSolution>& solutions);
+
+	void	LoadSavedHistory	(int number,
+								ePlayer& player,
+								ePlayer& opponent,
+								std::vector<CPeg>& pegsToInsert,
+								std::vector<CSolution>& solutions);
 
 	MYPoint	GetPegFromText		(int const x,
 								char const y);
+
+	MYPoint	GetPegFromText		(char const x,
+								int const y);
 };
 
 class CDialogForgotSave : public CDialog

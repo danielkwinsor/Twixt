@@ -2,6 +2,8 @@
 #include "stdafx.h"
 
 CTwixtGame TwixtGame;
+bool currentlyTrainingAStarWeights;
+bool currentlyTrainingAIWeights;
 
 BOOL CTwixtGame::InitInstance ()
 {
@@ -13,6 +15,7 @@ BOOL CTwixtGame::InitInstance ()
 
 BEGIN_MESSAGE_MAP (CMainWindow, CFrameWnd)
     ON_WM_PAINT ()
+	ON_WM_KEYDOWN ()
 	ON_WM_LBUTTONDOWN ()
 	ON_WM_RBUTTONDOWN ()
 	ON_COMMAND (ID_GAME_NEW, OnGameNew)
@@ -42,7 +45,7 @@ CMainWindow::CMainWindow()
 	XBoardSize = gameData.XBoardSize;
 	YBoardSize = gameData.YBoardSize;
 	//numThreads = gameData.numThreads;
-	numThreads = 1;
+	numThreads = 2;
 
 	CDir test = leftUp;
 	test++;
@@ -55,16 +58,25 @@ CMainWindow::CMainWindow()
 	SetMenu (&menu);
 	menu.Detach ();
 
+	currentlyTrainingAStarWeights = false;
+	currentlyTrainingAIWeights = false;
 	pThreadManager = new CThreadManager;
 	pMainAI = new AILogic(&MainBoard, pThreadManager, XBoardSize, YBoardSize, Dif_Medium);
 
 	StartNewGame(XBoardSize, YBoardSize, numThreads);
+
 
 	int profileType = 2;
 	if (profileType == 0) {
 		DoTurn();
 	}
 	else if (profileType == 1) {
+	}
+	else if (profileType == 2) {
+		ofstream file("loadedhistory.txt");
+		file.flush();
+	}
+	else if (profileType == 3) {
 		int iterations = 2;
 		pMainAI->insertPeg(MYPoint(3,12), ComputerRed);
 		pMainAI->insertPeg(MYPoint(3,18), ComputerRed);
@@ -239,7 +251,7 @@ CMainWindow::CMainWindow()
 		PerfManager::instance()->log(myfile);
 		myfile.close();
 	}
-	else if (profileType == 2) {
+	else if (profileType == 4) {
 		int iterations = 500000;
 		unsigned int highStart;
 		unsigned int lowStart;
@@ -285,7 +297,7 @@ CMainWindow::CMainWindow()
 			time -= 1;
 		}
 		ofstream benchmark("benchmark.txt");
-		benchmark<<time<<'\n'<<time2;
+		benchmark<<time<<'\n'<<time2<<"\n\n";
 
 		std::ofstream myfile;
 		myfile.open("profiler.txt");
@@ -295,62 +307,83 @@ CMainWindow::CMainWindow()
 	return;
 }//end ctor
 
-void CMainWindow::DebugLoadHistory()
+void CMainWindow::LoadSavedHistory(int number,
+								   ePlayer& player,
+								   ePlayer& opponent,
+								   std::vector<CPeg>& pegsToInsert,
+								   std::vector<CSolution>& solutions)
 {
-	ifstream file("Copy (25) of history.txt");
+	std::string filename;
+	if (number == -1) {
+		filename = "history.txt";
+	}
+	else if (number == 0) {
+		filename = "Copy of history.txt";
+	}
+	else {
+		filename = "Copy (";
+		char buffer[32] = {0};
+		_itoa_s(number, buffer, 10);
+		filename += buffer;
+		filename += ") of history.txt";
+	}
+
+	player = PlayerRed;
+	opponent = ComputerBlack;
+
+	ePlayer loadedPlayer;
+	bool firstPlayerLoaded = false;
+	bool secondPlayerLoaded = false;
+	ifstream file(filename.c_str());
 	int playerInt;
-	ePlayer player;
 	MYPoint Peg;
-	bool firstPlayerSet = false;
-	bool secondPlayerSet = false;
 	while (file.good()) {
 		int x;
 		int y;
 		file >> x >> y >> playerInt;
 		Peg.x = (char)x;
 		Peg.y = (char)y;
-		player = static_cast<ePlayer>(playerInt);
-		if (firstPlayerSet == false) {
-			firstPlayerSet = true;
-			gameData.firstPlayer = player;
-		}
-		else if (secondPlayerSet == false) {
-			secondPlayerSet = true;
-			gameData.secondPlayer = player;
-		}
+		loadedPlayer = static_cast<ePlayer>(playerInt);
 		if (Peg.x < 0 || Peg.y < 0) {
-			RemoveLastPeg(gameData.currentPlayer);
-			DecrementTurn();
+			pegsToInsert.pop_back();
 		}
 		else {
-			pMainAI->insertPeg(Peg, player);
-			IncrementTurn();
+			if (firstPlayerLoaded == false) {
+				firstPlayerLoaded = true;
+				player = loadedPlayer;
+			}
+			else if (secondPlayerLoaded == false) {
+				secondPlayerLoaded = true;
+				opponent = loadedPlayer;
+			}
+			pegsToInsert.push_back(CPeg(Peg, loadedPlayer));
+		}
+		char temp[128];
+		file.getline(temp, 128);
+		if (std::string(temp) == std::string(" end") || std::string(temp) == std::string(" END")) {
+			while (file.good()) {
+				int x;
+				int y;
+				float solutionWeight;
+				file >> x >> y >> solutionWeight;
+				solutions.push_back(CSolution(MYPoint(x, y), solutionWeight));
+			}
 		}
 	}
 	return;
-}//end DebugLoadHistory
+}//end LoadSavedHistory
 
 void CMainWindow::StartNewGame(int const XBoardSize,
 							   int const YBoardSize,
 							   int const numThreads)
 {
-#ifdef DEBUG
-	gameData.difficulty = Dif_Hard;//debug
-	debugSettings.debugLoadHistory = 1;
-#endif
-
 	pThreadManager->Init(&MainBoard, numThreads, XBoardSize, YBoardSize);
 	pMainAI->Init(XBoardSize, YBoardSize, gameData.difficulty, &MainBoard);
+	pMainAI->LoadAIWeights();
+	pMainAI->LoadAStarWeights();
 
-	if (debugSettings.debugLoadHistory == true) {
-		DebugLoadHistory();
-		ofstream file("debughistory.txt");
-		file.flush();
-	}
-	else {
-		ofstream file("history.txt");
-		file.flush();
-	}
+	ofstream file("history.txt");
+	file.flush();
 
 	lastPeg = MYPoint(0,0);
 	ChangeWindowSize();
@@ -367,10 +400,11 @@ CMainWindow::~CMainWindow ()
 	return;
 }//end dtor
 
-MYPoint CMainWindow::GetPegFromText(int const x,
-								   char const y)
+MYPoint CMainWindow::GetPegFromText(int const xCoord,
+								   char const yChar)
 {
-	switch (y) {
+	int x = xCoord-1;
+	switch (yChar) {
 	case 'A':
 		return MYPoint(x,0);
 	case 'B':
@@ -400,32 +434,87 @@ MYPoint CMainWindow::GetPegFromText(int const x,
 	}
 }//end
 
-void CMainWindow::LoadTestCase(int testCase)
+MYPoint CMainWindow::GetPegFromText(char const xChar,
+								   int const yCoord)
 {
-	pMainAI->Init(12, 12, Dif_Hard, &MainBoard);
-	XBoardSize = 12;
-	YBoardSize = 12;
-	pMainAI->SetBoardSize(XBoardSize, YBoardSize);
-	gameData.firstPlayer = ComputerRed;
-	gameData.secondPlayer = ComputerBlack;
+	int y = yCoord-1;
+	switch (xChar) {
+	case 'A':
+		return MYPoint(0,y);
+	case 'B':
+		return MYPoint(1,y);
+	case 'C':
+		return MYPoint(2,y);
+	case 'D':
+		return MYPoint(3,y);
+	case 'E':
+		return MYPoint(4,y);
+	case 'F':
+		return MYPoint(5,y);
+	case 'G':
+		return MYPoint(6,y);
+	case 'H':
+		return MYPoint(7,y);
+	case 'I':
+		return MYPoint(8,y);
+	case 'J':
+		return MYPoint(9,y);
+	case 'K':
+		return MYPoint(10,y);
+	case 'L':
+		return MYPoint(11,y);
+	default:
+		return MYPoint(0,y);
+	}
+}//end
 
-	int count = 0;
-	int x = 0;
-	char y = 0;
-	ePlayer player = NOTAPLAYER;
+void CMainWindow::LoadTestCase(int testCase,
+							   ePlayer& player,
+							   ePlayer& opponent,
+							   std::vector<CPeg>& pegsToInsert,
+							   std::vector<CSolution>& solutions)
+{
+	char numbers = 0;
+	bool numbersFirst = true;
+	bool firstPlayerAssigned = false;
+	int xCoord = 0;
+	char yChar = 0;
+	char xChar = 0;
+	int yCoord = 0;
+
+	char inputPlayer = NOTAPLAYER;
+	ePlayer startingPlayer = NOTAPLAYER;
+	player = NOTAPLAYER;
+	opponent = NOTAPLAYER;
 	string name("test case ");
 	char buffer[32] = {0};
 	_itoa_s(testCase, buffer, 10);
 	name += buffer;
 	name += ".txt";
 	ifstream file(name.c_str());
-	file>>count;
-	for (int num = 0; num < count; ++num) {
-		file>>x;
-		file>>y;
-		MYPoint Peg = GetPegFromText(x,y);
-		file>>y;
-		switch (y) {
+	file>>numbers;
+	if (numbers == 'T' || numbers == 't') {
+		numbersFirst = true;
+	}
+	else {
+		numbersFirst = false;
+	}
+	MYPoint Solution;
+	MYPoint Dest;
+	MYPoint Peg;
+	while (file.good()) {
+		if (numbersFirst == true) {
+			file>>xCoord;
+			file>>yChar;
+			Peg = GetPegFromText(xCoord,yChar);
+		}
+		else {
+			file>>xChar;
+			file>>yCoord;
+			Peg = GetPegFromText(xChar,yCoord);
+		}
+		file>>inputPlayer;
+		switch (inputPlayer) {
 		case 'W':
 			player = ComputerRed;
 			break;
@@ -433,20 +522,550 @@ void CMainWindow::LoadTestCase(int testCase)
 			player = ComputerBlack;
 			break;
 		}
-		pMainAI->insertPeg(Peg, player);
+		if (firstPlayerAssigned == false) {
+			firstPlayerAssigned = true;
+			startingPlayer = player;
+		}
+		pegsToInsert.push_back(CPeg(Peg, player));
+		char end[128];
+		file.getline(end, 128);
+		if (std::string(end) == std::string(" END") || std::string(end) == std::string(" end")) {
+			while(file.good()) {
+				float solutionWeight;
+				if (numbersFirst == true) {
+					file>>xCoord;
+					file>>yChar;
+					file>>solutionWeight;
+					Solution = GetPegFromText(xCoord,yChar);
+				}
+				else {
+					file>>xChar;
+					file>>yCoord;
+					file>>solutionWeight;
+					Solution = GetPegFromText(xChar,yCoord);
+				}
+				solutions.push_back(CSolution(Solution, solutionWeight));
+				char temp;
+				file.getline(&temp, 1);
+			}
+		}
 	}
-	MYPoint Dest;
-	pMainAI->DoTurn(&Dest, ComputerRed, ComputerBlack);
-	pMainAI->insertPeg(Dest, ComputerRed);
-	RePaint();
-	file>>x;
-	file>>y;
-	MYPoint Solution = GetPegFromText(x,y);
-	if (Dest == Solution) {
-		testCasesCorrect += 1;
+
+	if (startingPlayer == ComputerRed) {
+		player = ComputerRed;
+		opponent = ComputerBlack;
 	}
+	else {
+		player = ComputerBlack;
+		opponent = ComputerRed;
+	}
+
 	return;
 }//end LoadTestCase
+
+void CMainWindow::ViewTestCase(int testCase)
+{
+	historyPegs.clear();
+	historyIndex = 0;
+	std::vector<CSolution> solutions;
+	ePlayer player;
+	ePlayer opponent;
+	char numbers = 0;
+	bool numbersFirst = true;
+	bool firstPlayerAssigned = false;
+	int xCoord = 0;
+	char yChar = 0;
+	char xChar = 0;
+	int yCoord = 0;
+
+	char inputPlayer = NOTAPLAYER;
+	ePlayer startingPlayer = NOTAPLAYER;
+	player = NOTAPLAYER;
+	opponent = NOTAPLAYER;
+	string name("test case ");
+	char buffer[32] = {0};
+	_itoa_s(testCase, buffer, 10);
+	name += buffer;
+	name += ".txt";
+	ifstream file(name.c_str());
+	file>>numbers;
+	if (numbers == 'T' || numbers == 't') {
+		numbersFirst = true;
+	}
+	else {
+		numbersFirst = false;
+	}
+	MYPoint Solution;
+	MYPoint Dest(0,0);
+	MYPoint Peg;
+	while (file.good()) {
+		if (numbersFirst == true) {
+			file>>xCoord;
+			file>>yChar;
+			Peg = GetPegFromText(xCoord,yChar);
+		}
+		else {
+			file>>xChar;
+			file>>yCoord;
+			Peg = GetPegFromText(xChar,yCoord);
+		}
+		file>>inputPlayer;
+		switch (inputPlayer) {
+		case 'W':
+			player = ComputerRed;
+			break;
+		case 'B':
+			player = ComputerBlack;
+			break;
+		}
+		if (firstPlayerAssigned == false) {
+			firstPlayerAssigned = true;
+			startingPlayer = player;
+		}
+		historyPegs.push_back(CPeg(Peg, player));
+		char end[128];
+		file.getline(end, 128);
+		if (std::string(end) == std::string(" END") || std::string(end) == std::string(" end")) {
+			while(file.good()) {
+				float solutionWeight;
+				if (numbersFirst == true) {
+					file>>xCoord;
+					file>>yChar;
+					file>>solutionWeight;
+					Solution = GetPegFromText(xCoord,yChar);
+				}
+				else {
+					file>>xChar;
+					file>>yCoord;
+					file>>solutionWeight;
+					Solution = GetPegFromText(xChar,yCoord);
+				}
+				solutions.push_back(CSolution(Solution, solutionWeight));
+				char temp;
+				file.getline(&temp, 1);
+			}
+		}
+	}
+
+	if (startingPlayer == ComputerRed) {
+		player = ComputerRed;
+		opponent = ComputerBlack;
+	}
+	else {
+		player = ComputerBlack;
+		opponent = ComputerRed;
+	}
+
+	if (historyPegs.empty() == true || solutions.empty() == true) {
+		pMainAI->Init(12, 12, Dif_Hard, &MainBoard);
+		RePaint();
+		return;
+	}
+
+	ExecuteAITestCase(12, player, opponent, historyPegs, solutions, Dest);
+	RePaint();
+
+	bool destInserted = false;
+	std::vector<CPeg> pegsToDrawSpecial;
+	for each (CSolution solution in solutions) {
+		if (solution.solution == Dest) {
+			pegsToDrawSpecial.push_back(CPeg(solution.solution, Green));
+			destInserted = true;
+		}
+		else {
+			pegsToDrawSpecial.push_back(CPeg(solution.solution, Blue));
+		}
+	}
+	if (destInserted == false && Dest != MYPoint(0,0)) {
+		pegsToDrawSpecial.push_back(CPeg(Dest, Yellow));
+	}
+	DrawDebug(&pegsToDrawSpecial);
+
+	historyIndex = historyPegs.size();
+
+	return;
+}//end ViewTestCase
+
+void CMainWindow::ViewSavedHistory(int number)
+{
+	historyPegs.clear();
+	historyIndex = 0;
+	std::vector<CSolution> solutions;
+	ePlayer player;
+	ePlayer opponent;
+	ePlayer loadedPlayer = NOTAPLAYER;
+	player = NOTAPLAYER;
+	opponent = NOTAPLAYER;
+
+	bool firstPlayerLoaded = false;
+	bool secondPlayerLoaded = false;
+	int playerInt;
+	MYPoint Solution;
+	MYPoint Dest(0,0);
+	MYPoint Peg;
+
+	std::string filename;
+	if (number == -1) {
+		filename = "history.txt";
+	}
+	else if (number == 0) {
+		filename = "Copy of history.txt";
+	}
+	else {
+		filename = "Copy (";
+		char buffer[32] = {0};
+		_itoa_s(number, buffer, 10);
+		filename += buffer;
+		filename += ") of history.txt";
+	}
+	ifstream file(filename.c_str());
+	while (file.good()) {
+		int x;
+		int y;
+		file >> x >> y >> playerInt;
+		Peg.x = (char)x;
+		Peg.y = (char)y;
+		loadedPlayer = static_cast<ePlayer>(playerInt);
+		if (Peg.x < 0 || Peg.y < 0) {
+			historyPegs.pop_back();
+		}
+		else {
+			if (firstPlayerLoaded == false) {
+				firstPlayerLoaded = true;
+				player = loadedPlayer;
+			}
+			else if (secondPlayerLoaded == false) {
+				secondPlayerLoaded = true;
+				opponent = loadedPlayer;
+			}
+			historyPegs.push_back(CPeg(Peg, loadedPlayer));
+		}
+		char temp[128];
+		file.getline(temp, 128);
+		if (std::string(temp) == std::string(" end") || std::string(temp) == std::string(" END")) {
+			while (file.good()) {
+				int x;
+				int y;
+				float solutionWeight;
+				file >> x >> y >> solutionWeight;
+				solutions.push_back(CSolution(MYPoint(x, y), solutionWeight));
+				char temp;
+				file.getline(&temp, 1);
+			}
+		}
+	}
+
+	if (historyPegs.empty() == true || solutions.empty() == true) {
+		pMainAI->Init(24, 24, Dif_Hard, &MainBoard);
+		RePaint();
+		return;
+	}
+
+	ExecuteAITestCase(24, player, opponent, historyPegs, solutions, Dest);
+	RePaint();
+
+	bool destInserted = false;
+	std::vector<CPeg> pegsToDrawSpecial;
+	for each (CSolution solution in solutions) {
+		if (solution.solution == Dest) {
+			pegsToDrawSpecial.push_back(CPeg(solution.solution, Green));
+			destInserted = true;
+		}
+		else {
+			pegsToDrawSpecial.push_back(CPeg(solution.solution, Blue));
+		}
+	}
+	if (destInserted == false && Dest != MYPoint(0,0)) {
+		pegsToDrawSpecial.push_back(CPeg(Dest, Yellow));
+	}
+	DrawDebug(&pegsToDrawSpecial);
+
+	historyIndex = historyPegs.size();
+
+	return;
+}//end ViewSavedHistory
+
+void CMainWindow::ExecuteAITestCase(int sizeOfBoard,
+									ePlayer player,
+									ePlayer opponent,
+									std::vector<CPeg>& pegsToInsert,
+									std::vector<CSolution>& solutions,
+									MYPoint& Dest)
+{
+	if (pegsToInsert.empty() == false && solutions.empty() == false) {
+		pMainAI->Init(sizeOfBoard, sizeOfBoard, Dif_Hard, &MainBoard);
+		XBoardSize = sizeOfBoard;
+		YBoardSize = sizeOfBoard;
+		pMainAI->SetBoardSize(XBoardSize, YBoardSize);
+		gameData.firstPlayer = player;
+		gameData.secondPlayer = opponent;
+
+		for each (CPeg peg in pegsToInsert) {
+			pMainAI->insertPeg(peg.peg, peg.player);
+		}
+
+		pMainAI->DoTurnAndEval(&Dest, player, opponent, solutions);
+	}
+}
+
+void CMainWindow::ExecuteAStarTestCase(int sizeOfBoard,
+										ePlayer player,
+										ePlayer opponent,
+										std::vector<CPeg>& pegsToInsert,
+										std::vector<CSolution>& solutions)
+{
+	if (pegsToInsert.empty() == false && solutions.empty() == false) {
+		pMainAI->Init(sizeOfBoard, sizeOfBoard, Dif_Hard, &MainBoard);
+		XBoardSize = sizeOfBoard;
+		YBoardSize = sizeOfBoard;
+		pMainAI->SetBoardSize(XBoardSize, YBoardSize);
+		gameData.firstPlayer = player;
+		gameData.secondPlayer = opponent;
+
+		for each (CPeg peg in pegsToInsert) {
+			pMainAI->insertPeg(peg.peg, peg.player);
+		}
+
+		pMainAI->FindPathAndEval(player, solutions);
+	}
+}
+
+
+#define NUM_TEST_CASES 60
+#define NUM_HISTORIES 25
+
+void TrainAIWeights(CMainWindow* pMainWindow)
+{
+	while (currentlyTrainingAIWeights == false) {
+		Sleep(100);
+	}
+	int iterations = 0;
+	ePlayer player;
+	ePlayer opponent;
+	std::vector<CPeg> pegsToInsert;
+	std::vector<CSolution> solutions;
+	MYPoint Dest;
+	
+	unsigned int random;
+	__asm {
+		rdtsc	;
+		mov		[random], edx;
+		mov		[random], eax;
+		}
+	srand(random);
+	for (;;) {
+		while (currentlyTrainingAIWeights == false) {
+			Sleep(100);
+		}
+		++iterations;
+		pMainWindow->pMainAI->currentWeightsScore = 0.0f;
+
+		//do all of the test cases
+		for (int cases = 1; cases <= NUM_TEST_CASES; ++cases) {
+			pegsToInsert.clear();
+			solutions.clear();
+			pMainWindow->LoadTestCase(cases, player, opponent, pegsToInsert, solutions);
+			pMainWindow->ExecuteAITestCase(12, player, opponent, pegsToInsert, solutions, Dest);
+		}
+
+		//do all of the stored histories
+		for (int histories = 1; histories <= NUM_HISTORIES; ++histories) {
+			pegsToInsert.clear();
+			solutions.clear();
+			pMainWindow->LoadSavedHistory(histories, player, opponent, pegsToInsert, solutions);
+			pMainWindow->ExecuteAITestCase(24, player, opponent, pegsToInsert, solutions, Dest);
+		}
+
+		pMainWindow->pMainAI->currentAIWeightsScore = pMainWindow->pMainAI->currentWeightsScore;
+		pMainWindow->pMainAI->SaveAIWeights();
+		pMainWindow->pMainAI->PerturbAIWeights();//comes AFTER we have tested what we loaded
+		ofstream iters("AITrainingIterations.txt");
+		iters << iterations;
+		iters.close();
+	}
+	return;
+}//end TrainAIWeights
+
+void TrainAStarWeights(CMainWindow* pMainWindow)
+{
+	while (currentlyTrainingAStarWeights == false) {
+		Sleep(100);
+	}
+	pMainWindow->RetestAStarWeights();
+
+	int todaysIterations = 0;
+	int allIterations = 0;
+	ePlayer player;
+	ePlayer opponent;
+	std::vector<CPeg> pegsToInsert;
+	std::vector<CSolution> solutions;
+	unsigned int random;
+	__asm {
+		rdtsc	;
+		mov		[random], edx;
+		mov		[random], eax;
+		}
+	srand(random);
+
+	for (;;) {
+		while (currentlyTrainingAStarWeights == false) {
+			Sleep(100);
+		}
+		pMainWindow->pMainAI->currentWeightsScore = 0.0f;
+
+		//do all of the test cases
+		for (int cases = 1; cases <= NUM_TEST_CASES; ++cases) {
+			pegsToInsert.clear();
+			solutions.clear();
+			pMainWindow->LoadTestCase(cases, player, opponent, pegsToInsert, solutions);
+			pMainWindow->ExecuteAStarTestCase(12, player, opponent, pegsToInsert, solutions);
+		}
+
+		//do all of the stored histories
+		for (int histories = 1; histories <= NUM_HISTORIES; ++histories) {
+			pegsToInsert.clear();
+			solutions.clear();
+			pMainWindow->LoadSavedHistory(histories, player, opponent, pegsToInsert, solutions);
+			pMainWindow->ExecuteAStarTestCase(24, player, opponent, pegsToInsert, solutions);
+		}
+
+		pMainWindow->pMainAI->currentAStarWeightsScore = pMainWindow->pMainAI->currentWeightsScore;
+		pMainWindow->pMainAI->SaveAStarWeights();
+		pMainWindow->pMainAI->PerturbAStarWeights();//comes AFTER we have tested what we loaded
+		fstream iters("AStarTrainingIterations.txt");
+		iters >> allIterations;
+		iters.close();
+		iters.open("AStarTrainingIterations.txt", ios::out);
+		iters << allIterations+1 << "\tTotal Iterations";
+		iters << '\n' << ++todaysIterations << "\tToday's Iterations";
+		iters.close();
+	}
+	return;
+}//end TrainAStarWeights
+
+void CMainWindow::SaveHistory(bool const skipLastEntry)
+{
+	ePlayer firstPlayer = gameData.firstPlayer;
+	ePlayer secondPlayer = gameData.secondPlayer;
+	std::vector<MYPoint>* pFirstPlayerPegs = pMainAI->GetPlayerPegList(firstPlayer);
+	std::vector<MYPoint>* pSecondPlayerPegs = pMainAI->GetPlayerPegList(secondPlayer);
+	if (pFirstPlayerPegs->empty() == true && pSecondPlayerPegs->empty() == true) {
+		return;
+	}
+
+	int index = 0;
+	std::string filename;
+	do {
+		++index;
+		filename = "Copy (";
+		char buffer[32] = {0};
+		_itoa_s(index, buffer, 10);
+		filename += buffer;
+		filename += ") of history.txt";
+
+		//mimic ios::noreplace
+		std::ifstream history(filename.c_str());
+		if (!history) {
+			//file doesn't exist, we will create it next
+			break;
+		}
+		else {
+			//file already exists, so continue
+			history.close();
+		}
+	} while (index);
+
+	std::ofstream history(filename.c_str());
+
+	bool skipLastFirstPlayerPeg = (skipLastEntry == true && pFirstPlayerPegs->size() > pSecondPlayerPegs->size());
+	bool skipLastSecondPlayerPeg = (skipLastEntry == true && pFirstPlayerPegs->size() == pSecondPlayerPegs->size());
+	for (index = 0; index < pFirstPlayerPegs->size(); ++index) {
+		if (skipLastFirstPlayerPeg == true && index == pFirstPlayerPegs->size() - 1) {
+			break;
+		}
+		else {
+			history<<'\n'<<(int)(*pFirstPlayerPegs)[index].x<<' '<<(int)(*pFirstPlayerPegs)[index].y<<' '<<firstPlayer;
+		}
+		if (skipLastSecondPlayerPeg == true && index == pSecondPlayerPegs->size() - 1) {
+			break;
+		}
+		else {
+			history<<'\n'<<(int)(*pSecondPlayerPegs)[index].x<<' '<<(int)(*pSecondPlayerPegs)[index].y<<' '<<secondPlayer;
+		}
+	}
+	history<<" END";
+
+	return;
+}//end SaveHistory
+
+void CMainWindow::RetestAStarWeights()
+{
+	ePlayer player;
+	ePlayer opponent;
+	std::vector<CPeg> pegsToInsert;
+	std::vector<CSolution> solutions;
+
+	std::vector<std::vector<int>> weights;
+	pMainAI->LoadAStarWeightsFromBackup(weights);
+
+	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
+		pMainAI->currentWeightsScore = 0.0f;
+		pMainAI->SetAStarLinkWeight(weights[numWeights][0]);
+		pMainAI->SetAStarBlockWeight(weights[numWeights][1]);
+		pMainAI->SetAStarDoubleSetupWeight(weights[numWeights][2]);
+
+		//do all of the test cases
+		for (int cases = 1; cases <= NUM_TEST_CASES; ++cases) {
+			pegsToInsert.clear();
+			solutions.clear();
+			LoadTestCase(cases, player, opponent, pegsToInsert, solutions);
+			ExecuteAStarTestCase(12, player, opponent, pegsToInsert, solutions);
+		}
+
+		//do all of the stored histories
+		for (int histories = 1; histories <= NUM_HISTORIES; ++histories) {
+			pegsToInsert.clear();
+			solutions.clear();
+			LoadSavedHistory(histories, player, opponent, pegsToInsert, solutions);
+			ExecuteAStarTestCase(24, player, opponent, pegsToInsert, solutions);
+		}
+
+		pMainAI->currentAStarWeightsScore = pMainAI->currentWeightsScore;
+		weights[numWeights].push_back(pMainAI->currentAStarWeightsScore);
+		ofstream iters("AStarRetestingIterations.txt");
+		iters << numWeights+1 << " / " << weights.size();
+		iters.close();
+	}
+	ofstream iters("AStarRetestingIterations.txt");
+	iters << "done";
+	iters.close();
+
+	//get best
+	pMainAI->bestAStarWeightsScore = 0;
+	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
+		if (weights[numWeights][3] > pMainAI->bestAStarWeightsScore) {
+			pMainAI->SetAStarLinkWeight(weights[numWeights][0]);
+			pMainAI->SetAStarBlockWeight(weights[numWeights][1]);
+			pMainAI->SetAStarDoubleSetupWeight(weights[numWeights][2]);
+			pMainAI->bestAStarWeightsScore = weights[numWeights][3];
+		}
+	}
+	pMainAI->currentAStarWeightsScore = pMainAI->bestAStarWeightsScore;
+
+	//prune really sucky ones
+	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
+		if ((weights[numWeights][3] * 2) < pMainAI->bestAStarWeightsScore) {
+			weights[numWeights] = weights[weights.size()-1];
+			weights.pop_back();
+		}
+	}
+
+	pMainAI->SaveAStarWeightsToBackup(weights);
+	pMainAI->bestAStarWeightsScore = 0;
+	pMainAI->SaveAStarWeights();
+	pMainAI->LoadAStarWeights();
+	return;
+}//end RetestAStarWeights
 
 bool CMainWindow::GetBoardCoordFromMouse(MYPoint* Source,
 										 const CPoint& mousePoint)
@@ -482,6 +1101,16 @@ void CMainWindow::GetPenAndBrush(CPen **Pen,
 		*Pen = &blackPen;
 		*Brush = &blackBrush;
 		break;
+	case Green:
+		*Pen = &greenPen;
+		*Brush = &greenBrush;
+		break;
+	case Yellow:
+		*Pen = &yellowPen;
+		*Brush = &yellowBrush;
+		break;
+
+	case Blue:
 	default:
 		*Pen = &bluePen;
 		*Brush = &blueBrush;
@@ -490,6 +1119,97 @@ void CMainWindow::GetPenAndBrush(CPen **Pen,
 
 	return;
 }//end GetPenAndBrush
+
+void CMainWindow::OnKeyDown(UINT nChar, UINT nRepeatCount, UINT nFlags)
+{
+	static int viewCase = 1;
+	static int history = 1;
+	bool shiftKeyDown = ::GetKeyState(VK_SHIFT) < 0;
+
+	if (currentlyTrainingAStarWeights == true || currentlyTrainingAIWeights == true) {
+		if (currentlyTrainingAStarWeights) {
+			switch (nChar) {
+				case 'x': case 'X':
+					pThreadManager->StopTrainingAStarWeights();
+			}
+		}
+		if (currentlyTrainingAIWeights) {
+			switch (nChar) {
+				case 'x': case 'X':
+					pThreadManager->StopTrainingAIWeights();
+			}
+		}
+
+
+		//if we are training weights, only accept this input!!!!!!!!!
+		return;
+	}
+
+	switch (nChar) {
+		case 'g': case 'G'://save a good history
+			SaveHistory(true);
+			break;
+
+		case 'f': case 'F'://forward in history
+			if (historyPegs.size() && historyIndex < historyPegs.size()) {
+				MYPoint Peg = historyPegs[historyIndex].peg;
+				if (Peg.x < 0 || Peg.y < 0) {
+					pMainAI->removePeg(Peg, historyPegs[historyIndex].player);
+				}
+				else {
+					pMainAI->insertPeg(Peg, historyPegs[historyIndex].player);
+				}
+				++historyIndex;
+				RePaint();
+			}
+			break;
+
+		case 'b': case 'B'://back in history
+			if (historyPegs.size() && historyIndex > 0) {
+				--historyIndex;
+				MYPoint Peg = historyPegs[historyIndex].peg;
+				if (Peg.x < 0 || Peg.y < 0) {
+					pMainAI->insertPeg(Peg, historyPegs[historyIndex].player);
+				}
+				else {
+					pMainAI->removePeg(Peg, historyPegs[historyIndex].player);
+				}
+				RePaint();
+			}
+			break;
+
+		case 'i': case 'I': pThreadManager->StartTrainingAIWeights(&TrainAIWeights, this); break;
+		case 's': case 'S': pThreadManager->StartTrainingAStarWeights(&TrainAStarWeights, this); break;
+		case VK_LEFT: shiftKeyDown ? history -= 10 : history -= 1; break;
+		case VK_RIGHT: shiftKeyDown ? history += 10 : history += 1; break;
+		case VK_UP: shiftKeyDown ? viewCase += 10 : viewCase += 1; break;
+		case VK_DOWN: shiftKeyDown ? viewCase -= 10 : viewCase -= 1; break;
+	}
+
+	switch (nChar) {
+		case VK_LEFT:
+		case VK_RIGHT:
+			if (history < -1) {
+				history = -1;
+			}
+			else if (history > NUM_HISTORIES) {
+				history = NUM_HISTORIES;
+			}
+			ViewSavedHistory(history);
+			break;
+		case VK_UP:
+		case VK_DOWN:
+			if (viewCase < 1) {
+				viewCase = 1;
+			}
+			else if (viewCase > NUM_TEST_CASES) {
+				viewCase = NUM_TEST_CASES;
+			}
+			ViewTestCase(viewCase);
+			break;
+	}
+	return;
+}
 
 void CMainWindow::OnLButtonDown (UINT nFlags, CPoint mousePoint)
 {
@@ -521,8 +1241,10 @@ void CMainWindow::OnRButtonDown (UINT nFlags, CPoint mousePoint)
 {
 	nFlags;
 	mousePoint;
+	ViewTestCase(1);
 
-	if (gameData.currentTurn >= gameData.maxPlayers) {
+	if (0) {
+	//if (gameData.currentTurn >= gameData.maxPlayers) {
 		ePlayer currentPlayer = gameData.currentPlayer;
 		//make sure the turn goes back to the current player instead of
 		//making the computer do its turn all over again
@@ -547,7 +1269,7 @@ void CMainWindow::InsertPeg(const MYPoint& Source,
 	else {
 		file.open("debughistory.txt", ios::app);
 	}
-	file<<'\n'<<(int)Source.x<<' '<<(int)Source.y<<' '<<player;
+	file<<(int)Source.x<<' '<<(int)Source.y<<' '<<player<<'\n';
 	file.close();
 
 	if (player == PlayerRed || player == PlayerBlack) {
@@ -792,7 +1514,7 @@ void CMainWindow::DrawBestPath(const MYPoint& LastPeg)
 	return;
 }//end DrawBestPath
 
-void CMainWindow::DrawDebug()
+void CMainWindow::DrawDebug(std::vector<CPeg>* pPegsToDrawSpecial)
 {
 	CClientDC dc (this);
 	if (debugSettings.showSearched == true) {
@@ -827,6 +1549,20 @@ void CMainWindow::DrawDebug()
 	if (debugSettings.showBestPath == true) {
 		if (pMainAI->ClosedList.empty() == false) {
 			DrawBestPath(pMainAI->ClosedList.back());
+		}
+	}
+
+	if (pPegsToDrawSpecial) {
+		for each (CPeg peg in *pPegsToDrawSpecial) {
+			CPen *Pen = 0;
+			CBrush *Brush = 0;
+			GetPenAndBrush(&Pen, &Brush, peg.player);
+			dc.SelectObject(*Pen);
+			dc.SelectObject(*Brush);
+			dc.Ellipse ((peg.peg.x * gridMulti) + pegUpper + 2,
+						(peg.peg.y * gridMulti) + pegUpper + 2,
+						(peg.peg.x * gridMulti) + (pegLower - 2),
+						(peg.peg.y * gridMulti) + (pegLower - 2));
 		}
 	}
 	return;
@@ -975,6 +1711,8 @@ void CMainWindow::CreatePens()
 	blueBrush.CreateSolidBrush (RGB(0, 0, 255));
 	greenPen.CreatePen (0, 1, RGB(0, 255, 0));
 	greenBrush.CreateSolidBrush (RGB(0, 255, 0));
+	yellowPen.CreatePen (0, 1, RGB(255, 255, 0));
+	yellowBrush.CreateSolidBrush (RGB(255, 255, 0));
 	backgroundBrush.CreateSolidBrush (RGB(255, 255, 255));
 	return;
 }//end CreatePens
@@ -1300,6 +2038,7 @@ void CDialogNewGame::OnDefault()
 
 BOOL CDialogNewGame::OnInitDialog() 
 {
+	//TODO fix bug
 	CDialog::OnInitDialog();
 	SetDlgItemInt(IDC_EDITSIZE, size);
 	SetDlgItemInt(IDC_NUMTHREADS, numThreads);

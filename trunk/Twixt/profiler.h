@@ -27,6 +27,8 @@ struct PerfDatum
     const int           _lineNumber;
     __int64             _cycles;        //Number of CPU cycles used
     __int64             _calls;         //Number of calls to this function
+private:
+	void operator=(PerfDatum& perf){perf;};
 };
 
 class PerfSort

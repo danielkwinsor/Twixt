@@ -8,24 +8,6 @@ using namespace std;
 class AILogic : public AStarPathfinder
 {
 public:
-	int		linksWeight;
-	int		blocksWeight;
-	int		doubleWeight;
-
-	unsigned int	NUMTURNSINHISTORY;//2
-	float	baseDefenseWeight;//1.0
-	float	baseOffenseWeight;//1.0
-	float	offRiskyDoubleJump;//0.8
-	float	defHasNoLinks;//0.8
-	float	defIsStartPeg;//0.8
-	float	defCantBlockLink;//0.35
-	float	defEndBlock;//0.8
-	float	defEndBlockStraight;//0.9
-	float	defBlocks1JumpLink;//1.25
-	float	defBlocks2JumpLink;//0.85
-	float	defBlocks3JumpLink;//1.05
-	float	offDoesntBlockOpponent;//0.9
-
 	AILogic();
 	AILogic(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 		CThreadManager* pThreadManager,
@@ -44,6 +26,14 @@ public:
 	void	DoTurn			(MYPoint* Dest,
 							ePlayer const player,
 							ePlayer const opponent);
+
+	void	DoTurnAndEval	(MYPoint* Dest,
+							ePlayer const player,
+							ePlayer const opponent,
+							std::vector<CSolution>& wantedDests);
+
+	void	FindPathAndEval	(ePlayer const player,
+							std::vector<CSolution>& wantedDests);
 
 	void	DoFirstTurn		(MYPoint* Dest,
 							ePlayer const player);
@@ -72,6 +62,28 @@ public:
 
 	void	UndoTurn		();
 
+	void	LoadAIWeights	();
+	void	SaveAIWeights	();
+	void	PerturbAIWeights();
+
+	float	currentWeightsScore;//could be AI or AStar
+
+	float	currentAIWeightsScore;//0.0
+	float	bestAIWeightsScore;//0.0
+	unsigned int	NUMTURNSINHISTORY;//2
+	float	baseDefenseWeight;//1.0
+	float	baseOffenseWeight;//1.0
+	float	offRiskyDoubleJump;//0.8
+	float	defHasNoLinks;//0.8
+	float	defIsStartPeg;//0.8
+	float	defCantBlockLink;//0.35
+	float	defEndBlock;//0.8
+	float	defEndBlockStraight;//0.9
+	float	defBlocks1JumpLink;//1.25
+	float	defBlocks2JumpLink;//0.85
+	float	defBlocks3JumpLink;//1.05
+	float	offDoesntBlockOpponent;//0.9
+
 private:
 	CThreadManager*			pThreadManager;
 	CBinaryHeap<MYPoint>		heap;
@@ -85,7 +97,6 @@ private:
 	vector<int>				playerTurns;
 	vector<int>				opponentTurns;
 
-	void	LoadAIWeights	();
 
 	int		CanPathBeBlocked(const CPath& path,
 							ePlayer const player);

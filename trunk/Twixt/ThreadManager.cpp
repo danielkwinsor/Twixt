@@ -17,6 +17,12 @@ CThreadManager::~CThreadManager()
 
 void CThreadManager::Destroy()
 {
+	if (pAStarTrainingThread) {
+		delete pAStarTrainingThread;
+	}
+	if (pAITrainingThread) {
+		delete pAITrainingThread;
+	}
 	boost::mutex::scoped_lock inputLock(inputMutex);
 	InputQueue.clear();
 	if (pThread1) {
@@ -102,8 +108,10 @@ bool CThreadManager::WaitTillDone()
 	}
 }//end WaitTillDone
 
-ThreadInput::ThreadInput(MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer)
+ThreadInput::ThreadInput(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer)
 {
+	ThreadInput::xSize = xSize;
+	ThreadInput::ySize = ySize;
 	ThreadInput::StartPeg = StartPeg;
 	ThreadInput::DestPeg = DestPeg;
 	ThreadInput::destSide = destSide;
@@ -129,6 +137,8 @@ CThreadManager::CThreadManager()
 {
 	pThread1 = NULL;
 	pThread2 = NULL;
+	pAStarTrainingThread = NULL;
+	pAITrainingThread = NULL;
 }//end ctor
 
 bool CThreadManager::isBusy()
@@ -144,15 +154,43 @@ void CThreadManager::Init(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDS
 	maxThreads = numThreads;
 	threadsAreBusy = false;
 	if (maxThreads >= 1) {
+		if (pThread1) delete pThread1;
 		pThread1 = new boost::thread(boost::bind(&ExecuteThread, SharedBoard,
 			this, &Thread1Mutex, XBoardSize, YBoardSize));
 	}
 	if (maxThreads >= 2) {
+		if (pThread2) delete pThread2;
 		pThread2 = new boost::thread(boost::bind(&ExecuteThread, SharedBoard,
 			this, &Thread2Mutex, XBoardSize, YBoardSize));
 	}
 	return;
 }//end Init
+
+void CThreadManager::StartTrainingAStarWeights(void (*pTrainingFunction)(CMainWindow*), CMainWindow* pMainWindow)
+{
+	currentlyTrainingAStarWeights = true;
+	if (pAStarTrainingThread == NULL) {
+		pAStarTrainingThread = new boost::thread(boost::bind(pTrainingFunction, pMainWindow));
+	}
+}
+
+void CThreadManager::StartTrainingAIWeights(void (*pTrainingFunction)(CMainWindow*), CMainWindow* pMainWindow)
+{
+	currentlyTrainingAIWeights = true;
+	if (pAITrainingThread == NULL) {
+		pAITrainingThread = new boost::thread(boost::bind(pTrainingFunction, pMainWindow));
+	}
+}
+
+void CThreadManager::StopTrainingAStarWeights()
+{
+	currentlyTrainingAStarWeights = false;
+}
+
+void CThreadManager::StopTrainingAIWeights()
+{
+	currentlyTrainingAIWeights = false;
+}
 
 void CThreadManager::PushAStarData(ThreadInput const input)
 {
@@ -179,6 +217,7 @@ void ExecuteThread(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 			boost::mutex::scoped_lock threadLock(*pThreadLock);
 			inputLock.unlock();
 			AStar.ResetAStarList();
+			AStar.SetBoardSize(input.xSize, input.ySize);
 			AStar.currentPlayer = input.currentPlayer;
 
 			if (input.jumpStart) {

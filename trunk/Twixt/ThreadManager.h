@@ -2,11 +2,15 @@
 #ifndef THREADMANAGER_H
 #define THREADMANAGER_H
 
+class CMainWindow;
+
 class ThreadInput
 {
 public:
 	ThreadInput(){return;};
-	ThreadInput(MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer);
+	ThreadInput(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer);
+	int			xSize;
+	int			ySize;
 	MYPoint		StartPeg;
 	MYPoint		DestPeg;
 	eSides		destSide;
@@ -37,6 +41,12 @@ public:
 	CThreadManager			();
 	~CThreadManager			();
 
+	void	StartTrainingAStarWeights(void (*pTrainingFunction)(CMainWindow*), CMainWindow* pMainWindow);
+	void	StopTrainingAStarWeights();
+
+	void	StartTrainingAIWeights(void (*pTrainingFunction)(CMainWindow*), CMainWindow* pMainWindow);
+	void	StopTrainingAIWeights();
+
 	void	Init			(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 							int const numThreads,
 							int const XBoardSize,
@@ -65,6 +75,8 @@ private:
 	int						maxThreads;
 	boost::thread*			pThread1;
 	boost::thread*			pThread2;
+	boost::thread*			pAStarTrainingThread;
+	boost::thread*			pAITrainingThread;
 	CBinaryHeap<MYPoint>	heap;
 };
 

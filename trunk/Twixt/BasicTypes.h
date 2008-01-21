@@ -17,7 +17,26 @@ public:
 	bool operator == (MYPoint compare) const {return (*(short*)this == *(short*)&compare);};
 	bool operator != (MYPoint compare) const {return (*(short*)this != *(short*)&compare);};
 #endif
+};
 
+class CPeg
+{
+public:
+	MYPoint	peg;
+	ePlayer	player;
+
+	CPeg() {return;};
+	CPeg(MYPoint peg, ePlayer player) {CPeg::peg = peg; CPeg::player = player; return;};
+};
+
+class CSolution
+{
+public:
+	MYPoint	solution;
+	float	solutionWeight;
+
+	CSolution() {return;};
+	CSolution(MYPoint solution, float solutionWeight) {CSolution::solution = solution; CSolution::solutionWeight = solutionWeight; return;};
 };
 
 class CDir
