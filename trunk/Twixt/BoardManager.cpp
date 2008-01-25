@@ -9,7 +9,7 @@ CBoardManager::CBoardManager(SharedAStarData (*pSharedBoard)[MAXBOARDSIZE][MAXBO
 							 int const XBoardSize,
 							 int const YBoardSize)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	pMainBoard = &MainBoard;
 	SharedBoard = pSharedBoard;
 	CBoardManager::XBoardSize = XBoardSize;
@@ -37,7 +37,7 @@ void CBoardManager::SetBoardSize(int const xSize,
 void CBoardManager::GetNineLinks(const CLink& link,
 								 NineLinks& nineLinks)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (link.IsDouble() == false) {
 		bool wasEmpty = nineLinks.empty();
 		NineLinks::iterator front = nineLinks.begin();
@@ -168,7 +168,7 @@ void CBoardManager::removeInvalidNineLinks(NineLinks& nineLinks,
 										   bool const wasEmpty,
 										   NineLinks::iterator front)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	NineLinks::iterator startIter = nineLinks.begin();
 	for (int count = 0; count < 9; ++count) {
 		if (isLinkWithinBoard(*startIter) == false) {
@@ -197,7 +197,7 @@ void CBoardManager::removeInvalidNineLinks(NineLinks& nineLinks,
 int CBoardManager::CountTurnsToLink(const CLink& link,
 									ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint destPeg = link.GetDestFromDir();
 	if (arePegsLinked(link.startPeg, destPeg) == true) {
 		return 0;
@@ -234,7 +234,7 @@ bool CBoardManager::canPegAndLinkBeBlocked(const CLink& link,
 										   const MYPoint& pegInLink,
 										   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	insertPeg(pegInLink, player);
 	bool returnValue = false;
 	if (isDestLinked(link.startPeg, link.jump, player) == false) {
@@ -255,7 +255,7 @@ bool CBoardManager::canLinkBeBlocked(const CLink& link,
 									ePlayer const player,
 									bool const opponentsTurn)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isLinkValid(link, player) == false) {
 		return true;
 	}
@@ -317,7 +317,7 @@ bool CBoardManager::canDoubleBeBlocked(const CLink& link,
 	//if 3 is needed, then the opponent can block it in 2 turns
 	//if the player needs 2 turns (1 after placing this peg)
 	//then the opponent needs at least 1 block *in place* to block it in time
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int neededLeftTurns = 3;
 	int neededRightTurns = 3;
 	if (isOwnerLinkable(link.startPeg, player) == true) {
@@ -442,7 +442,7 @@ bool CBoardManager::canDoubleBeBlocked(const CLink& link,
 bool CBoardManager::canDoubleBeBlockedLogic(const CLink& link,
 											ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint dest = link.GetDestFromDir();
 	if (isOwnerEnemy(link.startPeg, player) == true) {
 		if (isDestBlocked(link.startPeg, link.jump.direction) == false
@@ -463,7 +463,7 @@ void CBoardManager::RemoveDuplicateNineLinks(NineLinks& nineLinks,
 											 NineLinks& otherLinks,
 											 NineLinks& duplicateLinks)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	for (NineLinks::iterator nine = nineLinks.begin(); nine != nineLinks.end();) {
 		NineLinks::iterator found = find(otherLinks.begin(), otherLinks.end(), *nine);
 		if (found != otherLinks.end()) {
@@ -483,7 +483,7 @@ bool CBoardManager::canPegBlockLink(const MYPoint& peg,
 									ePlayer const pegPlayer,
 									ePlayer const linkPlayer)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isDestBlocked(link.startPeg, link.jump, linkPlayer) == true) {
 		return false;
 	}
@@ -681,7 +681,7 @@ bool CBoardManager::canPegBlockDoubleLogic(const MYPoint& peg,
 										   const CLink& link,
 										   ePlayer const pegPlayer)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint dest = link.GetDestFromDir();
 	if (link.startPeg == peg) {
 		if (isDestBlocked(link.startPeg, link.jump.direction) == false
@@ -703,7 +703,7 @@ CPathReturn CBoardManager::willPegBlockLink(const MYPoint& Peg,
 											ePlayer const pegPlayer,
 											ePlayer const linkPlayer)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathReturn pathReturn;
 	if (link.IsDouble() == false) {
 		pathReturn.leftPath = pathReturn.rightPath = willPegBlockJump(Peg,
@@ -746,7 +746,7 @@ bool CBoardManager::willPegBlockJump(const MYPoint& Peg,
 									 ePlayer const pegPlayer,
 									 ePlayer const linkPlayer)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (Peg == linkPeg || Peg == GetDestFromDir(linkPeg, linkDir)) {
 		if (pegPlayer == linkPlayer
 			|| pegPlayer == LinkableByAny) {
@@ -780,7 +780,7 @@ bool CBoardManager::canPegLink(const MYPoint& Peg,
 							   CDir const direction,
 							   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isDestLinked(Peg, direction) == true) {
 		return true;
 	}
@@ -820,7 +820,7 @@ void CBoardManager::GetDoublesFromPeg(const MYPoint& Peg,
 									  ePlayer const player,
 									  vector<CLink>& pDoubles)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	list<CLink> doubles;
 	vector<MYPoint>* pPegList = GetPlayerPegList(player);
 	for (vector<MYPoint>::iterator Dest = pPegList->begin();
@@ -960,7 +960,7 @@ CPathReturn CBoardManager::canPegLink(const MYPoint& Peg,
 									  const CJump& jump,
 									  ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathReturn returnValue;
 	if (jump.jumpType == SingleJump) {
 		returnValue.leftPath = canPegLink(Peg, jump.direction, player);
@@ -980,7 +980,7 @@ bool CBoardManager::canPathLink(const MYPoint& Peg,
 								CDir const dir2,
 								ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint IntPeg = GetDestFromDir(Peg, dir1);
 	if (isPegValid(IntPeg, player) == false) {
 		return false;
@@ -1091,7 +1091,7 @@ CPathReturn CBoardManager::isDestBlocked(const MYPoint& Peg,
 										 const CJump& jump,
 										 ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathReturn returnValue;
 	if (jump.jumpType == SingleJump) {
 		returnValue.leftPath = isDestBlocked(Peg, jump.direction, player);
@@ -1124,7 +1124,7 @@ CPathReturn CBoardManager::isDestBlocked(const MYPoint& Peg,
 bool CBoardManager::isPegValid(const MYPoint& Peg,
 							   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegWithinBoard(Peg, player) == true) {
 		if (isPegAvailable(Peg) == true
 			|| GetOwner(Peg) == player
@@ -1138,7 +1138,7 @@ bool CBoardManager::isPegValid(const MYPoint& Peg,
 bool CBoardManager::isLinkValid(const CLink& link,
 								ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegValid(link.startPeg, player) == true
 		&& isPegValid(link.GetDestFromDir(), player) == true) {
 		if (link.IsDouble() == false) {
@@ -1186,7 +1186,7 @@ CPathReturn CBoardManager::isDestLinked(const MYPoint& Peg,
 										const CJump& jump,
 										ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathReturn returnValue;
 	if (jump.jumpType == SingleJump) {
 		returnValue.leftPath = isDestLinked(Peg, jump.direction, player);
@@ -1213,7 +1213,7 @@ CPathReturn CBoardManager::isDestLinked(const MYPoint& Peg,
 void CBoardManager::addLink(const MYPoint& Peg,
 							CDir const direction)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	(*SharedBoard)[Peg.x][Peg.y].numLinks++;
 	(*SharedBoard)[Peg.x][Peg.y].linkedDirs[direction] = true;
 	CDir opposite = direction.GetOppositeDirection();
@@ -1258,7 +1258,7 @@ void CBoardManager::addLink(const MYPoint& Peg,
 
 int CBoardManager::GetNextLinkGroup()
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	vector<list<MYPoint>>::iterator iter = LinkGroups.begin();
 	int group = 1;
 	bool foundEmpty = false;
@@ -1277,7 +1277,7 @@ int CBoardManager::GetNextLinkGroup()
 void CBoardManager::removeLink(const MYPoint& Peg,
 							   CDir const direction)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	(*SharedBoard)[Peg.x][Peg.y].numLinks--;
 	(*SharedBoard)[Peg.x][Peg.y].linkedDirs[direction] = false;
 	CDir opposite = direction.GetOppositeDirection();
@@ -1331,7 +1331,7 @@ void CBoardManager::removeLink(const MYPoint& Peg,
 void CBoardManager::BuildGroupList(const MYPoint& Peg,
 								   list<MYPoint>& groupList)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	groupList.push_back(Peg);
 	for (CDir dir = leftUp; dir != NOTADIR; ++dir) {
 		if (isDestLinked(Peg, dir) == true) {
@@ -1347,7 +1347,7 @@ void CBoardManager::BuildGroupList(const MYPoint& Peg,
 void CBoardManager::addBlock(const MYPoint& Peg,
 							 CDir const direction)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegWithinBoard(GetDestFromDir(Peg, direction))) {
 		(*SharedBoard)[Peg.x][Peg.y].blockedDirs[direction]++;
 		CDir opposite = direction.GetOppositeDirection();
@@ -1360,7 +1360,7 @@ void CBoardManager::addBlock(const MYPoint& Peg,
 void CBoardManager::removeBlock(const MYPoint& Peg,
 								CDir const direction)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegWithinBoard(GetDestFromDir(Peg, direction))) {
 		(*SharedBoard)[Peg.x][Peg.y].blockedDirs[direction]--;
 		CDir opposite = direction.GetOppositeDirection();
@@ -1413,7 +1413,7 @@ void CBoardManager::removePeg(const MYPoint& Source,
 CPathReturn CBoardManager::isLinkWithinBoard(const CLink& link,
 											 ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathReturn returnPath;
 	returnPath.leftPath = returnPath.rightPath = isPegWithinBoard(link.startPeg, player)
 		&& isPegWithinBoard(link.GetDestFromDir(), player);
@@ -1453,7 +1453,7 @@ bool CBoardManager::isPegWithinBoard(const MYPoint& Source,
 bool CBoardManager::isPegOnSide(const MYPoint& Peg,
 								eSides const Side)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	switch (Side) {
 		case LeftSide:
 			return (Peg.x == 0 && !(Peg.y == 0 || Peg.y == YBoardSize - 1));

@@ -8,7 +8,7 @@ CAStarWeights AStarWeights;
 
 void CPath::OrderPath(eSides const side)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (this->empty() == true) {
 		return;
 	}
@@ -84,7 +84,7 @@ void CPath::OrderPath(eSides const side)
 
 void CPath::OrderLinks(eSides const side)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (this->empty() == true) {
 		return;
 	}
@@ -127,7 +127,7 @@ void CPath::GetIntersection(const CPath& enemyPath,
 							CPath& pEnemyIntersection,
 							CBoardManager& pBoard) const
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int const MAXDISTANCE = 2;
 	CPath pathLinks;
 	CPath enemyLinks;
@@ -159,7 +159,7 @@ void CPath::GetIntersection(const CPath& enemyPath,
 int CPath::GetBestDistance(const CLink& link,
 						   const CLink& compareLink) const
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint Dest = link.GetDestFromDir();
 	MYPoint CompareDest = compareLink.GetDestFromDir();
 	int best = abs(link.startPeg.x - compareLink.startPeg.x) + abs(link.startPeg.y - compareLink.startPeg.y);
@@ -181,7 +181,7 @@ int CPath::GetBestDistance(const CLink& link,
 void CPath::PathToLinks(CPath& pLinkList,
 						CBoardManager& pBoard) const
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	for each (CLink link in *this) {
 		if (link.IsDouble() == false) {
 			if (pBoard.isDestBlocked(link.startPeg, link.jump.direction) == false) {
@@ -230,7 +230,7 @@ void CPath::BuildPathList(const MYPoint& LastStep,
 						  const MYPoint& TerminalPeg,
 						  CBoardManager& pBoard)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (LastStep == TerminalPeg) {
 		return;
 	}
@@ -250,7 +250,7 @@ void CPath::BuildPathList(const MYPoint& LastStep,
 void CPath::InsertIntoPathList(const CLink& link,
 							   bool const wasEmpty)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (wasEmpty == false) {
 		if (find(begin(), end(), link) != end()) {
 			return;
@@ -272,7 +272,7 @@ AStarPathfinder::AStarPathfinder(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MA
 int AStarPathfinder::CountLinks(const MYPoint& Peg,
 								ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	//assumes Peg is currently unowned but player is considering it
 	int links = 0;
 	for (CDir dir = leftUp; dir != NOTADIR; ++dir) {
@@ -287,7 +287,7 @@ int AStarPathfinder::CountLinks(const MYPoint& Peg,
 
 void AStarPathfinder::JumpStartAStar(JumpStartData const jumpStartData)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	eSides startSide = jumpStartData.startSide;
 	ePlayer player = jumpStartData.player;
 	MYPoint Dest = jumpStartData.Dest;
@@ -356,7 +356,7 @@ void AStarPathfinder::CountLinksAndBlocksLogic(const MYPoint& Peg,
 											   int* pLinks,
 											   int* pBlocks)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isDestBlocked(Peg, dir) == false) {
 		MYPoint Dest = GetDestFromDir(Peg, dir);
 		if (isPegWithinBoard(Dest) == true) {
@@ -401,7 +401,7 @@ void AStarPathfinder::CountLinksAndBlocks(const MYPoint& Peg,
 										  int* pLinks,
 										  int* pBlocks)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	*pLinks = 0;
 	*pBlocks = 0;
 	//assumes Peg is currently unowned but player is considering it
@@ -417,7 +417,7 @@ void AStarPathfinder::CountLinksAndBlocks(const MYPoint& Peg,
 int AStarPathfinder::CountDoubles(const MYPoint& Peg,
 								  ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	//assumes Peg is currently unowned but player is considering it
 	int doublesWeight = 0;
 	int temp = 0;
@@ -483,7 +483,7 @@ bool AStarPathfinder::ReachedDest(MYPoint& Peg,
 int AStarPathfinder::CalcJumpH(const CLink& link,
 							   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	MYPoint Source = link.startPeg;
 	CJump jump = link.jump;
 	int add = 0;
@@ -521,7 +521,7 @@ bool AStarPathfinder::ExecuteAStarLogic(const MYPoint& Source,
 										eSides const DestSide,
 										bool const completeSearch)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CLink link(Source, jump);
 	if (isLinkValid(link, player) == false) {
 		return false;
@@ -621,15 +621,15 @@ bool AStarPathfinder::ExecuteAStarLogic(const MYPoint& Source,
 
 void AStarPathfinder::ResetAStarList()
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	for each (MYPoint Peg in ClosedList) {
 		SetAStarStatus(Peg, AStar_Init);
 		SetAStarG(Peg, 0);
 		SetAStarF(Peg, 0);
 		//SetAStarLink(Peg, CLink(MYPoint(0,0), CJump(NOTADIR, NOTAJUMP)));
 	}
-	for (int size = OpenHeap.size(); size > 0; --size) {
-		MYPoint Peg = OpenHeap.peekElement(size).data;
+	for (CBinaryHeap<MYPoint>::Iterator iter = OpenHeap.begin(); iter != OpenHeap.end(); ++iter) {
+		MYPoint Peg = iter->data;
 		SetAStarStatus(Peg, AStar_Init);
 		SetAStarG(Peg, 0);
 		SetAStarF(Peg, 0);
@@ -646,7 +646,7 @@ HEAP<MYPoint> AStarPathfinder::AStar(const MYPoint& Source,
 									eSides const DestSide,
 									bool const completeSearch)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	//if the AStar was jumpstarted, do this
 	if (GetAStarStatus(Source) == AStar_Open) {
 		OpenHeap.removeElement(Source);
@@ -688,7 +688,7 @@ int AStarPathfinder::CalcH(const MYPoint& Source,
 						   eSides const DestSide,
 						   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int absX = 0;
 	int absY = 0;
 

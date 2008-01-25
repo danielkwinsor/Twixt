@@ -80,8 +80,8 @@ MYPoint CThreadManager::GetBestPeg()
 
 #ifdef DEBUG
 	ofstream file("BestPathPegs.txt");
-	for (unsigned int index = 1; index <= heap.size(); ++index) {
-		file << '\n' << (int)heap.peekElement(index).data.x << '\t' << (int)heap.peekElement(index).data.y << '\t' << heap.peekElement(index).key;
+	for (CBinaryHeap<MYPoint>::Iterator iter = heap.begin(); iter != heap.end(); ++iter) {
+		file << '\n' << (int)(iter->data.x) << '\t' << (int)(iter->data.y) << '\t' << (iter->key);
 	}
 #endif
 

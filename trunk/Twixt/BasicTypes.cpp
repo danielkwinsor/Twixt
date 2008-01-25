@@ -353,7 +353,7 @@ eJump GetJumpType(const MYPoint& StartPeg,
 CJump GetJumpFromPegs(const MYPoint& StartPeg,
 					  const MYPoint& DestPeg)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CJump jump;
 	jump.jumpType = GetJumpType(StartPeg, DestPeg);
 	if (jump.jumpType != NOTAJUMP) {

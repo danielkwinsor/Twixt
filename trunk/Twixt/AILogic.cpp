@@ -149,7 +149,7 @@ void AILogic::Init(int const XBoardSize,
 				   eDifficulty const difficulty,
 				   SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE])
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	AILogic::difficulty = difficulty;
 	SetBoardSize(XBoardSize, YBoardSize);
 	for (int x = 0; x < XBoardSize; x++) {
@@ -195,7 +195,7 @@ void AILogic::GetStartData(ePlayer const player,
 int AILogic::GetBestPath(ePlayer const player,
 						 CPath* pPathList)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	ePlayer originalPlayer = currentPlayer;
 	currentPlayer = player;
 	eSides startSide;
@@ -279,7 +279,7 @@ int AILogic::GetBestPath(ePlayer const player,
 void AILogic::EvaluateOffense(const CPath& PathList,
 							   ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CLink connectingLink = CLink();
 
 	//handle the special case of the rearmost peg, it has no connectingLink
@@ -322,7 +322,7 @@ void AILogic::EvaluateOffenseLogic(const MYPoint& Peg,
 									 const CLink& link,
 									 const CLink& connectingLink)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegValid(Peg, player) == true && isOwnerThis(Peg, player) == false) {
 		int pegRanking = EvaluatePeg(Peg, link, connectingLink, player);
 		offensiveValues.push_back(pegRanking);
@@ -335,7 +335,7 @@ void AILogic::GetLinksWithPeg(const MYPoint& Peg,
 							  const CPath& links,
 							  CPath& pLinksWithPeg)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	for each (CLink link in links) {
 		if (Peg == link.startPeg || Peg == link.GetDestFromDir()) {
 			pLinksWithPeg.push_back(link);
@@ -347,7 +347,7 @@ void AILogic::GetLinksWithPeg(const MYPoint& Peg,
 void AILogic::GeneralEvaluation(vector<MYPoint>& pegs,
 								vector<int>& values)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	for (unsigned int count = 0; count < pegs.size(); ++count) {
 		MYPoint Peg = pegs[count];
 		int value = values[count];
@@ -368,7 +368,7 @@ void AILogic::AdjustWeights(const CPath& path,
 							ePlayer const player,
 							ePlayer const enemy)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 #pragma warning (disable: 4244)
 	float numOpponentTurns = CountTurnsToComplete(enemyPath, enemy);
 	float numPlayerTurns = CountTurnsToComplete(path, player);
@@ -422,7 +422,7 @@ void AILogic::AdjustWeights(const CPath& path,
 void AILogic::MergeOffAndDefValues(vector<MYPoint>& pegs,
 								   vector<int>& values)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	heap.clear();
 	bool found = false;
 	int value;
@@ -477,7 +477,7 @@ void AILogic::MergeOffAndDefValues(vector<MYPoint>& pegs,
 MYPoint AILogic::GetBestPeg(const vector<MYPoint>& pegs,
 						   const vector<int>& values)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	heap.clear();
 	for (unsigned int index = 0; index < pegs.size(); ++index) {
 		MYPoint peg = pegs[index];
@@ -492,7 +492,7 @@ MYPoint AILogic::GetBestPeg(const vector<MYPoint>& pegs,
 int AILogic::CanPathBeBlocked(const CPath& path,
 							  ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int blocks = 0;
 	for each (CLink link in path) {
 		if (arePegsLinked(link.startPeg, link.GetDestFromDir()) == false) {
@@ -511,7 +511,7 @@ int AILogic::EvaluatePeg(const MYPoint& Peg,
 						 const CLink& connectingLink,
 						 ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	//assumes link is valid
 	int links = CountLinks(Peg, player);
 	int setup = CountDoubles(Peg, player);
@@ -585,7 +585,7 @@ int AILogic::EvaluatePegLogic(const MYPoint& Peg,
 							  const CLink& Link,
 							  ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	CPathDirs pathDirs = Link.GetPathDirs();
 	CDir dir1;
 	CDir dir2;
@@ -619,7 +619,7 @@ int AILogic::CountDoubleBlocks(const MYPoint& peg,
 							   ePlayer const player,
 							   const CPath& enemyIntersection)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int blocks = 0;
 	vector<CLink> skipLinks;//don't count the same link that is part of 2 doubles
 	vector<CLink> doubles;
@@ -635,7 +635,7 @@ int AILogic::CountBlocksFromDouble(const CLink& doubleLink,
 								   ePlayer const player,
 								   const CPath& enemyIntersection)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int blocks = 0;
 	NineLinks nineLinks;
 	CPathDirs pathDirs = doubleLink.GetPathDirs();
@@ -682,7 +682,7 @@ int AILogic::CountBlocks(const MYPoint& Peg,
 						 ePlayer const player,
 						 const CPath& EnemyIntersection)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	//assumes Peg is currently unowned but player is considering it
 	int blocks = 0;
 	NineLinks nineLinks;
@@ -739,7 +739,7 @@ int AILogic::CountBlocks(const MYPoint& Peg,
 int AILogic::CountTurnsToComplete(const CPath& path,
 								  ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	int turns = 0;
 	if (path.empty() == false) {
 		if (GetOwner(path.begin()->startPeg) != player) {
@@ -858,7 +858,7 @@ void AILogic::DoTurn(MYPoint* Dest,
 					 ePlayer const player,
 					 ePlayer const opponent)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	currentPlayer = player;
 	eSides sides;
 	MYPoint DestPeg;
@@ -906,7 +906,7 @@ void AILogic::DoTurn(MYPoint* Dest,
 
 bool AILogic::CheckForWin(ePlayer const player)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	eSides side1, side2;
 	if (isSideValid(player, TopAndBottom) == true) {
 		side1 = TopSide;
@@ -946,7 +946,7 @@ void AILogic::EvaluateDefense(const CPath& enemyPath,
 							  const CPath& pathIntersection,
 							  const CPath& enemyIntersection)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	NineLinks blockingLinks;
 	vector<MYPoint> linkPegs;
 	for each (CLink enemyLink in enemyPath) {
@@ -1007,7 +1007,7 @@ void AILogic::EvaluateDefenseLogic(const MYPoint& peg,
 								  ePlayer const opponent,
 								  const CPath& enemyIntersection)
 {
-	PERFORMANCE_MARKER
+	PERFORMANCE_MARKER;
 	if (isPegWithinBoard(peg, player) == false
 		|| isPegAvailable(peg) == false) {
 		return;
