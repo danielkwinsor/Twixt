@@ -196,6 +196,8 @@ int AILogic::GetBestPath(ePlayer const player,
 						 CPath* pPathList)
 {
 	PERFORMANCE_MARKER
+	ePlayer originalPlayer = currentPlayer;
+	currentPlayer = player;
 	eSides startSide;
 	eSides destSide;
 	MYPoint DestPeg;
@@ -270,6 +272,7 @@ int AILogic::GetBestPath(ePlayer const player,
 			}
 		}
 	}
+	currentPlayer = originalPlayer;
 	return pathCost;
 }//end GetBestPath
 
@@ -284,6 +287,7 @@ void AILogic::EvaluateOffense(const CPath& PathList,
 		PathList.back().GetReversedLink(), connectingLink);
 
 	CLink previous = PathList.front();
+	CLink last = PathList.back();
 	for each (CLink link in PathList) {
 		if (previous != link) {
 			//nor does the first peg have a connectingLink
@@ -1023,7 +1027,7 @@ void AILogic::EvaluateDefenseLogic(const MYPoint& peg,
 		}
 	}
 	int weight = GetDefenseJumpTypeWeight(link.jump.jumpType);
-	float modifier = -200.0f;
+	float modifier = -2000.0f;
 	int numLinks = -CountLinks(peg, player);
 	if (numLinks == 0) {
 		modifier *= defHasNoLinks;

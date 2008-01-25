@@ -923,17 +923,17 @@ int CBoardManager::GetJumpTypeCost(eJump const jumpType)
 {
 	switch (jumpType) {
 	case SingleJump:
-		return ONEJUMP + 10;
+		return ONEJUMP + 1000;
 	case DoubleStraight:
-		return TWOJUMPS + 18;
+		return TWOJUMPS + 1800;
 	case DoubleDiamond:
 		return TWOJUMPS;
 	case DoubleSquare:
-		return TWOJUMPS + 5;
+		return TWOJUMPS + 500;
 	case DoubleShortDiamond:
-		return TWOJUMPS + 16;
+		return TWOJUMPS + 1600;
 	default:
-		return 999;
+		return 99999;
 	}
 }//end GetJumpTypeCost
 
