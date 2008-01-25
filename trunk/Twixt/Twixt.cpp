@@ -804,7 +804,7 @@ void CMainWindow::ExecuteAITestCase(int sizeOfBoard,
 			pMainAI->insertPeg(peg.peg, peg.player);
 		}
 
-		pMainAI->DoTurnAndEval(&Dest, player, opponent, solutions);
+		pMainAI->DoTurnAndEval(&Dest, player, opponent, solutions, true);
 	}
 }
 
@@ -826,7 +826,8 @@ void CMainWindow::ExecuteAStarTestCase(int sizeOfBoard,
 			pMainAI->insertPeg(peg.peg, peg.player);
 		}
 
-		pMainAI->FindPathAndEval(player, solutions);
+		MYPoint Dest;
+		pMainAI->DoTurnAndEval(&Dest, player, opponent, solutions, false);
 	}
 }
 
@@ -932,13 +933,14 @@ void TrainAStarWeights(CMainWindow* pMainWindow)
 		pMainWindow->pMainAI->currentAStarWeightsScore = pMainWindow->pMainAI->currentWeightsScore;
 		pMainWindow->pMainAI->SaveAStarWeights();
 		pMainWindow->pMainAI->PerturbAStarWeights();//comes AFTER we have tested what we loaded
-		fstream iters("AStarTrainingIterations.txt");
+		ifstream iters("AStarTrainingIterations.txt");
 		iters >> allIterations;
 		iters.close();
-		iters.open("AStarTrainingIterations.txt", ios::out);
-		iters << allIterations+1 << "\tTotal Iterations";
-		iters << '\n' << ++todaysIterations << "\tToday's Iterations";
-		iters.close();
+
+		ofstream itersOut("AStarTrainingIterations.txt");
+		itersOut << allIterations+1 << "\tTotal Iterations";
+		itersOut << '\n' << ++todaysIterations << "\tToday's Iterations";
+		itersOut.close();
 	}
 	return;
 }//end TrainAStarWeights
@@ -1005,14 +1007,18 @@ void CMainWindow::RetestAStarWeights()
 	std::vector<CPeg> pegsToInsert;
 	std::vector<CSolution> solutions;
 
-	std::vector<std::vector<int>> weights;
+	std::vector<CAStarWeights> weights;
 	pMainAI->LoadAStarWeightsFromBackup(weights);
 
 	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
+		ofstream iters("AStarRetestingIterations.txt");
+		iters << numWeights << " / " << weights.size();
+		iters.close();
+
 		pMainAI->currentWeightsScore = 0.0f;
-		pMainAI->SetAStarLinkWeight(weights[numWeights][0]);
-		pMainAI->SetAStarBlockWeight(weights[numWeights][1]);
-		pMainAI->SetAStarDoubleSetupWeight(weights[numWeights][2]);
+		pMainAI->SetAStarWeights(weights[numWeights].linksWeight,
+								weights[numWeights].blocksWeight,
+								weights[numWeights].doubleWeight);
 
 		//do all of the test cases
 		for (int cases = 1; cases <= NUM_TEST_CASES; ++cases) {
@@ -1031,30 +1037,28 @@ void CMainWindow::RetestAStarWeights()
 		}
 
 		pMainAI->currentAStarWeightsScore = pMainAI->currentWeightsScore;
-		weights[numWeights].push_back(pMainAI->currentAStarWeightsScore);
-		ofstream iters("AStarRetestingIterations.txt");
-		iters << numWeights+1 << " / " << weights.size();
-		iters.close();
+		weights[numWeights].weightsScore = pMainAI->currentAStarWeightsScore;
 	}
 	ofstream iters("AStarRetestingIterations.txt");
-	iters << "done";
+	iters << weights.size() << " / " << weights.size();
+	iters << "\ndone";
 	iters.close();
 
 	//get best
 	pMainAI->bestAStarWeightsScore = 0;
 	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
-		if (weights[numWeights][3] > pMainAI->bestAStarWeightsScore) {
-			pMainAI->SetAStarLinkWeight(weights[numWeights][0]);
-			pMainAI->SetAStarBlockWeight(weights[numWeights][1]);
-			pMainAI->SetAStarDoubleSetupWeight(weights[numWeights][2]);
-			pMainAI->bestAStarWeightsScore = weights[numWeights][3];
+		if (weights[numWeights].weightsScore > pMainAI->bestAStarWeightsScore) {
+			pMainAI->SetAStarWeights(weights[numWeights].linksWeight,
+									weights[numWeights].blocksWeight,
+									weights[numWeights].doubleWeight);
+			pMainAI->bestAStarWeightsScore = weights[numWeights].weightsScore;
 		}
 	}
 	pMainAI->currentAStarWeightsScore = pMainAI->bestAStarWeightsScore;
 
 	//prune really sucky ones
 	for (int numWeights = 0; numWeights != weights.size(); ++numWeights) {
-		if ((weights[numWeights][3] * 2) < pMainAI->bestAStarWeightsScore) {
+		if ((weights[numWeights].weightsScore * 2) < pMainAI->bestAStarWeightsScore) {
 			weights[numWeights] = weights[weights.size()-1];
 			weights.pop_back();
 		}
@@ -1122,8 +1126,8 @@ void CMainWindow::GetPenAndBrush(CPen **Pen,
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepeatCount, UINT nFlags)
 {
-	static int viewCase = 1;
-	static int history = 1;
+	static int viewCase = 0;
+	static int history = 0;
 	bool shiftKeyDown = ::GetKeyState(VK_SHIFT) < 0;
 
 	if (currentlyTrainingAStarWeights == true || currentlyTrainingAIWeights == true) {
@@ -1189,8 +1193,8 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepeatCount, UINT nFlags)
 	switch (nChar) {
 		case VK_LEFT:
 		case VK_RIGHT:
-			if (history < -1) {
-				history = -1;
+			if (history < 1) {
+				history = 1;
 			}
 			else if (history > NUM_HISTORIES) {
 				history = NUM_HISTORIES;

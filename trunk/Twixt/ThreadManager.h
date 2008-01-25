@@ -67,8 +67,9 @@ public:
 
 	//shared data
 	vector<ThreadInput>		InputQueue;
-	vector<ThreadOutput>	Output1;
-	list<ThreadOutput>		Output2;
+	vector<ThreadOutput>	wholePaths;
+	vector<ThreadOutput>	leftPathParts;
+	vector<ThreadOutput>	rightPathParts;
 	bool					threadsAreBusy;
 
 private:

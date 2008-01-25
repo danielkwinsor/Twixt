@@ -5,6 +5,19 @@
 
 using namespace std;
 
+class CAStarWeights
+{
+public:
+	float	weightsScore;
+	int		linksWeight;//500
+	int		blocksWeight;//200
+	int		doubleWeight;//200
+
+	bool	operator == (const CAStarWeights& compare) {return ((this->linksWeight == compare.linksWeight)
+															&& (this->blocksWeight == compare.blocksWeight)
+															&& (this->doubleWeight == compare.doubleWeight));};
+};
+
 class CPath : public list<CLink>
 {
 public:
@@ -78,8 +91,8 @@ public:
 	void	SaveAStarWeights	();
 	void	PerturbAStarWeights	();
 
-	void	LoadAStarWeightsFromBackup(std::vector<std::vector<int>>& weights);
-	void	SaveAStarWeightsToBackup(std::vector<std::vector<int>>& weights);
+	void	LoadAStarWeightsFromBackup(std::vector<CAStarWeights>& weights);
+	void	SaveAStarWeightsToBackup(std::vector<CAStarWeights>& weights);
 
 private:
 	bool	ExecuteAStarLogic(const MYPoint& Source,
@@ -104,11 +117,11 @@ private:
 	int		GetAStarLinkWeight	();
 	int		GetAStarBlockWeight	();
 	int		GetAStarDoubleSetupWeight	();
-
+	float	GetAStarWeightsScore();
 public://sorry but must be public
-	void	SetAStarLinkWeight	(int const newLinkWeight);
-	void	SetAStarBlockWeight	(int const newBlockWeight);
-	void	SetAStarDoubleSetupWeight	(int const newDoubleWeight);
+	void	SetAStarWeights	(int const newLinkWeight,
+							int const newBlockWeight,
+							int const newDoubleWeight);
 
 };
 

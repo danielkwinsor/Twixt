@@ -63,3 +63,8 @@
 942 = blocksWeight
 1296 = doubleWeight
 
+9.6 = tiedAStarWeightsScore
+84 = linksWeight
+547 = blocksWeight
+154 = doubleWeight
+

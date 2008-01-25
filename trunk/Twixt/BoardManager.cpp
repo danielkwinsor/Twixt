@@ -398,8 +398,7 @@ bool CBoardManager::canDoubleBeBlocked(const CLink& link,
 	bool leftBlockNeeded = (neededLeftTurns > opponentsLeftTurns - 1
 							&& leftPathUnblocked == true);
 	bool rightBlockNeeded = (neededRightTurns > opponentsRightTurns - 1
-							&& link.IsDoubleStraight() == false
-							&& rightPathUnblocked == true);
+							&& rightPathValid == true);
 
 	leftNine.clear();
 	rightNine.clear();
@@ -415,7 +414,7 @@ bool CBoardManager::canDoubleBeBlocked(const CLink& link,
 		}
 	}
 
-	if (rightBlockNeeded == true){
+	if (rightBlockNeeded == true) {
 		GetNineLinks(CLink(link.startPeg, pathDirs.rightDir), rightNine);
 		GetNineLinks(CLink(RightPeg, pathDirs.leftDir), rightNine);
 		if (leftBlockNeeded == false) {

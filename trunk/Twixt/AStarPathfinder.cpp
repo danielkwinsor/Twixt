@@ -4,9 +4,7 @@
 using namespace std;
 
 //need to be global for all the instances of AStar
-int		linksWeight;//500
-int		blocksWeight;//200
-int		doubleWeight;//200
+CAStarWeights AStarWeights;
 
 void CPath::OrderPath(eSides const side)
 {
@@ -404,6 +402,8 @@ void AStarPathfinder::CountLinksAndBlocks(const MYPoint& Peg,
 										  int* pBlocks)
 {
 	PERFORMANCE_MARKER
+	*pLinks = 0;
+	*pBlocks = 0;
 	//assumes Peg is currently unowned but player is considering it
 	for (CDir dir = leftUp; dir != NOTADIR; ++dir) {
 		if (isDestLinked(Peg, dir) == false) {
@@ -776,34 +776,33 @@ int AStarPathfinder::CalcH(const MYPoint& Source,
 	}
 }//end CalcH
 
-void AStarPathfinder::SetAStarLinkWeight(int const newLinkWeight)
+void AStarPathfinder::SetAStarWeights(int const newLinkWeight,
+									  int const newBlockWeight,
+									  int const newDoubleWeight)
 {
-	linksWeight = newLinkWeight;
-}
-
-void AStarPathfinder::SetAStarBlockWeight(int const newBlockWeight)
-{
-	blocksWeight = newBlockWeight;
-}
-
-void AStarPathfinder::SetAStarDoubleSetupWeight(int const newDoubleWeight)
-{
-	doubleWeight = newDoubleWeight;
+	AStarWeights.linksWeight = newLinkWeight;
+	AStarWeights.blocksWeight = newBlockWeight;
+	AStarWeights.doubleWeight = newDoubleWeight;
 }
 
 int AStarPathfinder::GetAStarLinkWeight()
 {
-	return linksWeight;
+	return AStarWeights.linksWeight;
 }
 
 int AStarPathfinder::GetAStarBlockWeight()
 {
-	return blocksWeight;
+	return AStarWeights.blocksWeight;
 }
 
 int AStarPathfinder::GetAStarDoubleSetupWeight()
 {
-	return doubleWeight;
+	return AStarWeights.doubleWeight;
+}
+
+float AStarPathfinder::GetAStarWeightsScore()
+{
+	return AStarWeights.weightsScore;
 }
 
 void AStarPathfinder::LoadAStarWeights()
@@ -812,24 +811,25 @@ void AStarPathfinder::LoadAStarWeights()
 	if (weights) {
 		char temp[128];
 		weights >> bestAStarWeightsScore; weights.getline(temp, 128);
-		weights >> linksWeight; weights.getline(temp, 128);
-		weights >> blocksWeight; weights.getline(temp, 128);
-		weights >> doubleWeight; weights.getline(temp, 128);
+		weights >> AStarWeights.linksWeight; weights.getline(temp, 128);
+		weights >> AStarWeights.blocksWeight; weights.getline(temp, 128);
+		weights >> AStarWeights.doubleWeight; weights.getline(temp, 128);
 	}
 	else {
 		bestAStarWeightsScore = -1.0f;
 		currentAStarWeightsScore = 0.0f;
-		linksWeight = 500;
-		blocksWeight = 200;
-		doubleWeight = 200;
+		AStarWeights.linksWeight = 500;
+		AStarWeights.blocksWeight = 200;
+		AStarWeights.doubleWeight = 200;
 	}
 	return;
 }//end LoadAStarWeights
 
-void AStarPathfinder::LoadAStarWeightsFromBackup(std::vector<std::vector<int>>& weights)
+void AStarPathfinder::LoadAStarWeightsFromBackup(std::vector<CAStarWeights>& weights)
 {
 	char temp[128];
-	int backupBestAStarWeightsScore, backupLinksWeight, backupBlocksWeight, backupDoubleWeight;
+	float backupBestAStarWeightsScore;
+	int backupLinksWeight, backupBlocksWeight, backupDoubleWeight;
 	for (int x = 0; x < 3; ++x) {
 		std::string dir;
 		if (x == 0) {
@@ -861,10 +861,11 @@ void AStarPathfinder::LoadAStarWeightsFromBackup(std::vector<std::vector<int>>& 
 					backup >> backupBlocksWeight; backup.getline(temp, 128);
 					backup >> backupDoubleWeight; backup.getline(temp, 128);
 					if (backup.good()) {
-						std::vector<int> backupWeights;
-						backupWeights.push_back(backupLinksWeight);
-						backupWeights.push_back(backupBlocksWeight);
-						backupWeights.push_back(backupDoubleWeight);
+						CAStarWeights backupWeights;
+						backupWeights.weightsScore = backupBestAStarWeightsScore;
+						backupWeights.linksWeight = backupLinksWeight;
+						backupWeights.blocksWeight = backupBlocksWeight;
+						backupWeights.doubleWeight = backupDoubleWeight;
 						if (find(weights.begin(), weights.end(), backupWeights) == weights.end()) {
 							weights.push_back(backupWeights);
 						}
@@ -880,15 +881,15 @@ void AStarPathfinder::LoadAStarWeightsFromBackup(std::vector<std::vector<int>>& 
 	return;
 }//end LoadAStarWeights
 
-void AStarPathfinder::SaveAStarWeightsToBackup(std::vector<std::vector<int>>& weights)
+void AStarPathfinder::SaveAStarWeightsToBackup(std::vector<CAStarWeights>& weights)
 {
 	ofstream backup("AStarBackupWeights.txt");
 	if (backup) {
-		for each (std::vector<int> backupWeights in weights) {
-			backup << backupWeights[3] << " = backupBestAStarWeightsScore\n";
-			backup << backupWeights[0] << " = backupLinksWeight\n";
-			backup << backupWeights[1] << " = backupBlocksWeight\n";
-			backup << backupWeights[2] << " = backupDoubleWeight\n";
+		for each (CAStarWeights backupWeights in weights) {
+			backup << backupWeights.weightsScore << " = backupBestAStarWeightsScore\n";
+			backup << backupWeights.linksWeight << " = backupLinksWeight\n";
+			backup << backupWeights.blocksWeight << " = backupBlocksWeight\n";
+			backup << backupWeights.doubleWeight << " = backupDoubleWeight\n";
 			backup << "\n";
 		}
 	}
@@ -901,18 +902,18 @@ void AStarPathfinder::SaveAStarWeights()
 		ofstream weights("AStarBestWeights.txt");
 
 		weights << currentAStarWeightsScore << " = bestAStarWeightsScore\n";
-		weights << linksWeight << " = linksWeight\n";
-		weights << blocksWeight << " = blocksWeight\n";
-		weights << doubleWeight << " = doubleWeight\n";
+		weights << AStarWeights.linksWeight << " = linksWeight\n";
+		weights << AStarWeights.blocksWeight << " = blocksWeight\n";
+		weights << AStarWeights.doubleWeight << " = doubleWeight\n";
 		weights.close();
 
 		//and I want to store a backup of the new best
 		if (bestAStarWeightsScore != 0.0f) {
 			ofstream tied("AStarTiedWeights.txt",std::ios::app);
 			tied << currentAStarWeightsScore << " = bestAStarWeightsScore\n";
-			tied << linksWeight << " = linksWeight\n";
-			tied << blocksWeight << " = blocksWeight\n";
-			tied << doubleWeight << " = doubleWeight\n";
+			tied << AStarWeights.linksWeight << " = linksWeight\n";
+			tied << AStarWeights.blocksWeight << " = blocksWeight\n";
+			tied << AStarWeights.doubleWeight << " = doubleWeight\n";
 			tied << "\n";
 		}
 		bestAStarWeightsScore = currentAStarWeightsScore;
@@ -921,31 +922,31 @@ void AStarPathfinder::SaveAStarWeights()
 		if (currentAStarWeightsScore >= bestAStarWeightsScore - 1.0f) {
 			ofstream tied("AStarTiedWeights.txt",std::ios::app);
 			tied << currentAStarWeightsScore << " = tiedAStarWeightsScore\n";
-			tied << linksWeight << " = linksWeight\n";
-			tied << blocksWeight << " = blocksWeight\n";
-			tied << doubleWeight << " = doubleWeight\n";
+			tied << AStarWeights.linksWeight << " = linksWeight\n";
+			tied << AStarWeights.blocksWeight << " = blocksWeight\n";
+			tied << AStarWeights.doubleWeight << " = doubleWeight\n";
 			tied << "\n";
 			tied.close();
 		}
 		ofstream weights("AStarCurrentWeights.txt");
 
 		weights << currentAStarWeightsScore << " = currentAStarWeightsScore\n";
-		weights << linksWeight << " = linksWeight\n";
-		weights << blocksWeight << " = blocksWeight\n";
-		weights << doubleWeight << " = doubleWeight\n";
+		weights << AStarWeights.linksWeight << " = linksWeight\n";
+		weights << AStarWeights.blocksWeight << " = blocksWeight\n";
+		weights << AStarWeights.doubleWeight << " = doubleWeight\n";
 	}
 	return;
 }//end SaveAStarWeights
 
 void AStarPathfinder::PerturbAStarWeights()
 {
-	linksWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
-	blocksWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
-	doubleWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
+	AStarWeights.linksWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
+	AStarWeights.blocksWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
+	AStarWeights.doubleWeight *= (((rand()%2000) * 0.0002f) + 0.8f);
 
-	if (linksWeight < 25 || linksWeight > 10000) linksWeight = 500;
-	if (blocksWeight < 10 || blocksWeight > 4000) blocksWeight = 200;
-	if (doubleWeight < 10 || doubleWeight > 4000) doubleWeight = 200;
+	if (AStarWeights.linksWeight < 25 || AStarWeights.linksWeight > 10000) AStarWeights.linksWeight = 500;
+	if (AStarWeights.blocksWeight < 10 || AStarWeights.blocksWeight > 4000) AStarWeights.blocksWeight = 200;
+	if (AStarWeights.doubleWeight < 10 || AStarWeights.doubleWeight > 4000) AStarWeights.doubleWeight = 200;
 
 	return;
 }//end PerturbAStarWeights

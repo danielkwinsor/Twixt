@@ -15,6 +15,7 @@ AILogic::AILogic(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 	Init(XBoardSize, YBoardSize, difficulty, SharedBoard);
 	playerTurns.clear();
 	opponentTurns.clear();
+	currentWeightsScore = 0.0f;
 	return;
 }//end ctor
 
@@ -208,11 +209,11 @@ int AILogic::GetBestPath(ePlayer const player,
 	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
 		StartPeg, DestPeg, destSide, player,
 		true, JumpStartData(startSide, DestPeg, player),
-		completeSearch, 1, buildPathList, currentPlayer));
+		completeSearch, 0, buildPathList, currentPlayer));
 	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
 		DestPeg, StartPeg, startSide, player,
 		true, JumpStartData(destSide, StartPeg, player),
-		completeSearch, 1, buildPathList, currentPlayer));
+		completeSearch, 0, buildPathList, currentPlayer));
 
 	MYPoint nullPeg;
 	vector<int> LinkGroupList;
@@ -750,19 +751,23 @@ int AILogic::CountTurnsToComplete(const CPath& path,
 	return turns;
 }//end CountTurnsToComplete
 
-void AILogic::FindPathAndEval(ePlayer const player,
-							  std::vector<CSolution>& solutions)
+void AILogic::DoTurnAndEval(MYPoint* Dest,
+							ePlayer const player,
+							ePlayer const opponent,
+							std::vector<CSolution>& solutions,
+							bool const forceEvalPegsOnPath)
 {
+	if (solutions.empty() == true) {
+		return;
+	}
+
 	currentPlayer = player;
 	eSides sides;
-	eSides startSide;
-	eSides destSide;
 	MYPoint DestPeg;
 	MYPoint StartPeg;
-	vector<MYPoint>* pPegList;
-	GetStartData(player, StartPeg, DestPeg, startSide, destSide, &pPegList);
 	isSideValid(player, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
 
+	//find the player's path only, enemy path may not be necessary
 	CPath path;
 	GetBestPath(player, &path);
 	path.OrderPath(sides);
@@ -792,8 +797,58 @@ void AILogic::FindPathAndEval(ePlayer const player,
 		}
 	}
 	currentWeightsScore += bestWeightsScore;
+
+	//if we found a solution peg on the path, then we can simulate the rest of the turn
+	if (forceEvalPegsOnPath == true || bestWeightsScore != 0.0f) {
+		CPath enemyPath;
+		GetBestPath(opponent, &enemyPath);
+		isSideValid(opponent, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
+		enemyPath.OrderPath(sides);
+
+		CPath enemyIntersection;
+		CPath pathIntersection;
+		path.GetIntersection(enemyPath, pathIntersection, enemyIntersection, *this);
+
+		defensivePegs.clear();
+		defensiveValues.clear();
+		defensiveBaseValues.clear();
+		offensivePegs.clear();
+		offensiveValues.clear();
+		EvaluateDefense(enemyPath, player, opponent, pathIntersection, enemyIntersection);
+
+		EvaluateOffense(path, player);
+
+		AdjustWeights(path, enemyPath, player, opponent);
+
+		vector<MYPoint> pegs;
+		vector<int> values;
+		MergeOffAndDefValues(pegs, values);
+		GeneralEvaluation(pegs, values);
+
+		*Dest = GetBestPeg(pegs, values);
+
+		//now that we have our best peg, and a heap of second-best pegs,
+		//add up all the extra scores based on weights
+		float tempBestWeightScore = 0.0f;
+		bestWeightsScore = 0.0f;
+		int bestScore = heap.peekTopHeap().key;
+		while (heap.size()) {
+			HEAP<MYPoint> bestPoint = heap.popTopHeap();
+			for each (CSolution solution in solutions) {
+				if (bestPoint.data == solution.solution) {
+					tempBestWeightScore = solution.solutionWeight * bestPoint.key / bestScore;
+					if (tempBestWeightScore > bestWeightsScore) {
+						bestWeightsScore = tempBestWeightScore;
+					}
+					break;
+				}
+			}
+		}
+		currentWeightsScore += bestWeightsScore;
+	}
 	return;
-}//end FindPathAndEval
+}//end DoTurnAndEval
+
 
 void AILogic::DoTurn(MYPoint* Dest,
 					 ePlayer const player,
@@ -801,17 +856,9 @@ void AILogic::DoTurn(MYPoint* Dest,
 {
 	PERFORMANCE_MARKER
 	currentPlayer = player;
-	CPath enemyPath;
 	eSides sides;
-	GetBestPath(opponent, &enemyPath);
-	isSideValid(opponent, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
-	enemyPath.OrderPath(sides);
-	eSides startSide;
-	eSides destSide;
 	MYPoint DestPeg;
 	MYPoint StartPeg;
-	vector<MYPoint>* pPegList;
-	GetStartData(player, StartPeg, DestPeg, startSide, destSide, &pPegList);
 	isSideValid(player, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
 
 	CPath path;
@@ -823,6 +870,11 @@ void AILogic::DoTurn(MYPoint* Dest,
 		*Dest = MYPoint(0,0);
 		return;
 	}
+
+	CPath enemyPath;
+	GetBestPath(opponent, &enemyPath);
+	isSideValid(opponent, TopAndBottom) ? sides = TopAndBottom : sides = LeftAndRight;
+	enemyPath.OrderPath(sides);
 
 	CPath enemyIntersection;
 	CPath pathIntersection;
@@ -846,27 +898,7 @@ void AILogic::DoTurn(MYPoint* Dest,
 	*Dest = GetBestPeg(pegs, values);
 
 	return;
-}
-
-void AILogic::DoTurnAndEval(MYPoint* Dest,
-							ePlayer const player,
-							ePlayer const opponent,
-							std::vector<CSolution>& solutions)
-{
-	DoTurn(Dest, player, opponent);
-	if (solutions.empty() == false) {
-		int bestScore = heap.peekTopHeap().key;
-		while (heap.size()) {
-			HEAP<MYPoint> bestPoint = heap.popTopHeap();
-			for each (CSolution solution in solutions) {
-				if (bestPoint.data == solution.solution) {
-					currentWeightsScore += solution.solutionWeight * bestPoint.key / bestScore;
-				}
-			}
-		}
-	}
-	return;
-}//end DoTurnAndEval
+}//end DoTurn
 
 bool AILogic::CheckForWin(ePlayer const player)
 {
@@ -956,8 +988,8 @@ void AILogic::EvaluateDefense(const CPath& enemyPath,
 #ifdef DEBUG
 	ofstream file("defense.txt");
 	for (unsigned int index = 0; index < defensiveValues.size(); ++index) {
-		file << '\n' << (int)defensivePegs[index].x << "  " << (int)defensivePegs[index].y
-			<< " \t" << defensiveValues[index] << "\t" << defensiveBaseValues[index]
+		file << '\n' << (int)defensivePegs[index].x << "\t" << (int)defensivePegs[index].y
+			<< "\t" << defensiveValues[index] << "\t" << defensiveBaseValues[index]
 			<< "\t" << defensiveValues[index] + defensiveBaseValues[index];
 	}
 #endif
@@ -991,7 +1023,7 @@ void AILogic::EvaluateDefenseLogic(const MYPoint& peg,
 		}
 	}
 	int weight = GetDefenseJumpTypeWeight(link.jump.jumpType);
-	float modifier = -20.0f;
+	float modifier = -200.0f;
 	int numLinks = -CountLinks(peg, player);
 	if (numLinks == 0) {
 		modifier *= defHasNoLinks;

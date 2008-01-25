@@ -30,10 +30,8 @@ public:
 	void	DoTurnAndEval	(MYPoint* Dest,
 							ePlayer const player,
 							ePlayer const opponent,
-							std::vector<CSolution>& wantedDests);
-
-	void	FindPathAndEval	(ePlayer const player,
-							std::vector<CSolution>& wantedDests);
+							std::vector<CSolution>& wantedDests,
+							bool const forceEvalPegsOnPath);
 
 	void	DoFirstTurn		(MYPoint* Dest,
 							ePlayer const player);

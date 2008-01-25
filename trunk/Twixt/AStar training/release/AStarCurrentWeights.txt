@@ -1,4 +1,4 @@
-5 = currentAStarWeightsScore
-216 = linksWeight
-365 = blocksWeight
-497 = doubleWeight
+9.46913 = currentAStarWeightsScore
+907 = linksWeight
+31 = blocksWeight
+147 = doubleWeight
