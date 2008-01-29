@@ -5,9 +5,7 @@ using namespace std;
 
 //These need to be global
 boost::mutex			inputMutex;
-boost::mutex			output0Mutex;
-boost::mutex			output1Mutex;
-boost::mutex			output2Mutex;
+boost::mutex			outputMutex;
 boost::mutex			Thread1Mutex;
 boost::mutex			Thread2Mutex;
 
@@ -42,41 +40,39 @@ void CThreadManager::ClearData()
 {
 	heap.clear();
 
-	boost::mutex::scoped_lock output0Lock(output0Mutex);
-	wholePaths.clear();
-	output0Lock.unlock();
-
-	boost::mutex::scoped_lock output1Lock(output1Mutex);
-	leftPathParts.clear();
-	output1Lock.unlock();
-
-	boost::mutex::scoped_lock output2Lock(output2Mutex);
-	rightPathParts.clear();
-	output2Lock.unlock();
+	boost::mutex::scoped_lock outputLock(outputMutex);
+	pathOutputs.clear();
 	return;
 }//end ClearData
 
 MYPoint CThreadManager::GetBestPeg()
 {
-	for (vector<ThreadOutput>::iterator iter = wholePaths.begin(); iter != wholePaths.end(); ++iter) {
-		HEAP<MYPoint> data = iter->topHeap;
-		if (data.key != -1) {
-			heap.insertElement(data.data, data.key);
+	for (list<ThreadOutput>::iterator iter = pathOutputs.begin(); iter != pathOutputs.end(); ++iter) {
+		if (iter->pathNumber > 0) {
+			HEAP<MYPoint> wholePath = iter->topHeap;
+			if (wholePath.key != -1) {
+				heap.insertElement(wholePath.data, wholePath.key);
+			}
 		}
-	}
-
-	for (vector<ThreadOutput>::iterator iter = leftPathParts.begin(); iter != leftPathParts.end(); ++iter) {
-		HEAP<MYPoint> data1 = iter->topHeap;
-		for (vector<ThreadOutput>::iterator compare = rightPathParts.begin(); compare != rightPathParts.end(); ++compare) {
-			HEAP<MYPoint> data2 = compare->topHeap;
-			if (data1.data == data2.data) {
-				if (data1.key != -1 && data2.key != -1) {
-					heap.insertElement(data1.data, data1.key + data2.key);
+		else if (iter->pathNumber == 0) {
+			continue;
+		}
+		else {
+			HEAP<MYPoint> leftPathPart = iter->topHeap;
+			for (list<ThreadOutput>::iterator compare = iter; compare != pathOutputs.end(); ++compare) {
+				HEAP<MYPoint> rightPathPart = compare->topHeap;
+				if (leftPathPart.data == rightPathPart.data) {
+					//set it so we don't search for it again
+					iter->pathNumber = 0;
+					if (leftPathPart.key != -1 && rightPathPart.key != -1) {
+						heap.insertElement(leftPathPart.data, leftPathPart.key + rightPathPart.key);
+					}
+					break;
 				}
-				break;
 			}
 		}
 	}
+
 
 #ifdef DEBUG
 	ofstream file("BestPathPegs.txt");
@@ -102,9 +98,7 @@ bool CThreadManager::WaitTillDone()
 			boost::mutex::scoped_lock thread1Lock(Thread1Mutex);
 			boost::mutex::scoped_lock thread2Lock(Thread2Mutex);
 
-			boost::mutex::scoped_lock output0Lock(output0Mutex);
-			boost::mutex::scoped_lock output1Lock(output1Mutex);
-			boost::mutex::scoped_lock output2Lock(output2Mutex);
+			boost::mutex::scoped_lock outputLock(outputMutex);
 			threadsAreBusy = false;
 			return true;
 		}
@@ -131,8 +125,10 @@ ThreadInput::ThreadInput(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg
 }//end ctor
 
 ThreadOutput::ThreadOutput(HEAP<MYPoint> const topHeap,
-						   bool const buildPath)
+						   bool const buildPath,
+						   int const pathNumber)
 {
+	ThreadOutput::pathNumber = pathNumber;
 	ThreadOutput::topHeap = topHeap;
 	ThreadOutput::buildPath = buildPath;
 	return;
@@ -231,7 +227,7 @@ void ExecuteThread(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 			HEAP<MYPoint> topHeap = AStar.AStar(input.StartPeg, input.DestPeg,
 				input.player, input.destSide, input.completeSearch);
 
-			ThreadOutput threadOutput(topHeap, input.buildPath);
+			ThreadOutput threadOutput(topHeap, input.buildPath, input.outputNum);
 			if (input.buildPath == true) {
 				if (topHeap.key != -1) {//only build a path if a path was found!
 					threadOutput.pathList.BuildPathList(topHeap.data,
@@ -242,18 +238,8 @@ void ExecuteThread(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 				threadOutput.topHeap.data = input.StartPeg;
 			}
 
-			if (input.outputNum == 0) {
-				boost::mutex::scoped_lock output0Lock(output0Mutex);
-				pThreadManager->wholePaths.push_back(threadOutput);
-			}
-			else if (input.outputNum == 1) {
-				boost::mutex::scoped_lock output1Lock(output1Mutex);
-				pThreadManager->leftPathParts.push_back(threadOutput);
-			}
-			else {
-				boost::mutex::scoped_lock output2Lock(output2Mutex);
-				pThreadManager->rightPathParts.push_back(threadOutput);
-			}
+			boost::mutex::scoped_lock outputLock(outputMutex);
+			pThreadManager->pathOutputs.push_back(threadOutput);
 			wait = false;
 		}
 		else {

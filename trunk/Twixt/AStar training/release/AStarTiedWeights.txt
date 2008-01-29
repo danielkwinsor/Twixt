@@ -18,3 +18,33 @@
 61 = blocksWeight
 154 = doubleWeight
 
+17.3697 = tiedAStarWeightsScore
+36 = linksWeight
+120 = blocksWeight
+265 = doubleWeight
+
+18.3675 = bestAStarWeightsScore
+33 = linksWeight
+89 = blocksWeight
+245 = doubleWeight
+
+18.1744 = tiedAStarWeightsScore
+40 = linksWeight
+18 = blocksWeight
+109 = doubleWeight
+
+18.1744 = tiedAStarWeightsScore
+47 = linksWeight
+15 = blocksWeight
+100 = doubleWeight
+
+18.1744 = tiedAStarWeightsScore
+49 = linksWeight
+14 = blocksWeight
+113 = doubleWeight
+
+18.1705 = tiedAStarWeightsScore
+42 = linksWeight
+15 = blocksWeight
+93 = doubleWeight
+

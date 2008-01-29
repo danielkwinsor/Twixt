@@ -1,4 +1,14 @@
-15.0462 = backupBestAStarWeightsScore
+16.8308 = backupBestAStarWeightsScore
+7848 = backupLinksWeight
+1353 = backupBlocksWeight
+1198 = backupDoubleWeight
+
+16.1629 = backupBestAStarWeightsScore
+35 = backupLinksWeight
+61 = backupBlocksWeight
+154 = backupDoubleWeight
+
+15.0463 = backupBestAStarWeightsScore
 752 = backupLinksWeight
 347 = backupBlocksWeight
 1140 = backupDoubleWeight
@@ -8,7 +18,7 @@
 519 = backupBlocksWeight
 1257 = backupDoubleWeight
 
-15.6463 = backupBestAStarWeightsScore
+13.6463 = backupBestAStarWeightsScore
 426 = backupLinksWeight
 1347 = backupBlocksWeight
 1188 = backupDoubleWeight
@@ -43,7 +53,7 @@
 1587 = backupBlocksWeight
 200 = backupDoubleWeight
 
-12.5739 = backupBestAStarWeightsScore
+11.9739 = backupBestAStarWeightsScore
 5677 = backupLinksWeight
 225 = backupBlocksWeight
 1120 = backupDoubleWeight
@@ -133,12 +143,12 @@
 629 = backupBlocksWeight
 252 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9923 = backupLinksWeight
 804 = backupBlocksWeight
 326 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9426 = backupLinksWeight
 475 = backupBlocksWeight
 296 = backupDoubleWeight
@@ -153,17 +163,17 @@
 200 = backupBlocksWeight
 282 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9268 = backupLinksWeight
 443 = backupBlocksWeight
 246 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9855 = backupLinksWeight
 385 = backupBlocksWeight
 259 = backupDoubleWeight
 
-13.9739 = backupBestAStarWeightsScore
+12.7396 = backupBestAStarWeightsScore
 8343 = backupLinksWeight
 990 = backupBlocksWeight
 262 = backupDoubleWeight
@@ -198,22 +208,22 @@
 1436 = backupBlocksWeight
 242 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9157 = backupLinksWeight
 1503 = backupBlocksWeight
 286 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 8915 = backupLinksWeight
 231 = backupBlocksWeight
 289 = backupDoubleWeight
 
-13.9739 = backupBestAStarWeightsScore
+13.974 = backupBestAStarWeightsScore
 8471 = backupLinksWeight
 285 = backupBlocksWeight
 277 = backupDoubleWeight
 
-11.619 = backupBestAStarWeightsScore
+12.9967 = backupBestAStarWeightsScore
 9603 = backupLinksWeight
 3808 = backupBlocksWeight
 441 = backupDoubleWeight
@@ -228,27 +238,27 @@
 1029 = backupBlocksWeight
 257 = backupDoubleWeight
 
-13.9739 = backupBestAStarWeightsScore
+13.974 = backupBestAStarWeightsScore
 9265 = backupLinksWeight
 1702 = backupBlocksWeight
 292 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 8577 = backupLinksWeight
 451 = backupBlocksWeight
 285 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 8345 = backupLinksWeight
 286 = backupBlocksWeight
 249 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9598 = backupLinksWeight
 366 = backupBlocksWeight
 286 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9265 = backupLinksWeight
 994 = backupBlocksWeight
 251 = backupDoubleWeight
@@ -293,22 +303,22 @@
 790 = backupBlocksWeight
 284 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9928 = backupLinksWeight
 937 = backupBlocksWeight
 253 = backupDoubleWeight
 
-13.9739 = backupBestAStarWeightsScore
+13.974 = backupBestAStarWeightsScore
 9134 = backupLinksWeight
 382 = backupBlocksWeight
 300 = backupDoubleWeight
 
-13.974 = backupBestAStarWeightsScore
+13.9739 = backupBestAStarWeightsScore
 9016 = backupLinksWeight
 200 = backupBlocksWeight
 301 = backupDoubleWeight
 
-10.9586 = backupBestAStarWeightsScore
+10.9677 = backupBestAStarWeightsScore
 9086 = backupLinksWeight
 3652 = backupBlocksWeight
 733 = backupDoubleWeight
@@ -318,17 +328,17 @@
 261 = backupBlocksWeight
 1721 = backupDoubleWeight
 
-13.9739 = backupBestAStarWeightsScore
+14.1681 = backupBestAStarWeightsScore
 8140 = backupLinksWeight
 454 = backupBlocksWeight
 265 = backupDoubleWeight
 
-13.7915 = backupBestAStarWeightsScore
+13.7784 = backupBestAStarWeightsScore
 8938 = backupLinksWeight
 641 = backupBlocksWeight
 3542 = backupDoubleWeight
 
-10.3025 = backupBestAStarWeightsScore
+10.3354 = backupBestAStarWeightsScore
 3932 = backupLinksWeight
 3718 = backupBlocksWeight
 694 = backupDoubleWeight
@@ -338,12 +348,12 @@
 547 = backupBlocksWeight
 154 = backupDoubleWeight
 
-14.6315 = backupBestAStarWeightsScore
+14.638 = backupBestAStarWeightsScore
 7958 = backupLinksWeight
 461 = backupBlocksWeight
 1540 = backupDoubleWeight
 
-14.6915 = backupBestAStarWeightsScore
+14.6784 = backupBestAStarWeightsScore
 8852 = backupLinksWeight
 722 = backupBlocksWeight
 2564 = backupDoubleWeight
@@ -363,7 +373,7 @@
 2589 = backupBlocksWeight
 403 = backupDoubleWeight
 
-14.6738 = backupBestAStarWeightsScore
+14.66 = backupBestAStarWeightsScore
 6823 = backupLinksWeight
 1225 = backupBlocksWeight
 1662 = backupDoubleWeight
@@ -403,7 +413,7 @@
 966 = backupBlocksWeight
 1435 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+13.6521 = backupBestAStarWeightsScore
 508 = backupLinksWeight
 1201 = backupBlocksWeight
 1325 = backupDoubleWeight
@@ -433,12 +443,12 @@
 180 = backupBlocksWeight
 1434 = backupDoubleWeight
 
-13.0463 = backupBestAStarWeightsScore
+13.0521 = backupBestAStarWeightsScore
 565 = backupLinksWeight
 965 = backupBlocksWeight
 1041 = backupDoubleWeight
 
-14.1262 = backupBestAStarWeightsScore
+14.1195 = backupBestAStarWeightsScore
 4767 = backupLinksWeight
 3043 = backupBlocksWeight
 2295 = backupDoubleWeight
@@ -458,7 +468,7 @@
 338 = backupBlocksWeight
 1273 = backupDoubleWeight
 
-15.0463 = backupBestAStarWeightsScore
+17.0463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 566 = backupBlocksWeight
 1188 = backupDoubleWeight
@@ -478,7 +488,7 @@
 463 = backupBlocksWeight
 1491 = backupDoubleWeight
 
-14.6915 = backupBestAStarWeightsScore
+14.6848 = backupBestAStarWeightsScore
 7582 = backupLinksWeight
 1113 = backupBlocksWeight
 2434 = backupDoubleWeight
@@ -488,7 +498,7 @@
 802 = backupBlocksWeight
 1352 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+15.6463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 1625 = backupBlocksWeight
 1478 = backupDoubleWeight
@@ -523,7 +533,7 @@
 1843 = backupBlocksWeight
 1468 = backupDoubleWeight
 
-12.5851 = backupBestAStarWeightsScore
+12.6629 = backupBestAStarWeightsScore
 857 = backupLinksWeight
 2032 = backupBlocksWeight
 1532 = backupDoubleWeight
@@ -533,7 +543,7 @@
 549 = backupBlocksWeight
 2378 = backupDoubleWeight
 
-14.7297 = backupBestAStarWeightsScore
+14.3991 = backupBestAStarWeightsScore
 8875 = backupLinksWeight
 709 = backupBlocksWeight
 2388 = backupDoubleWeight
@@ -563,7 +573,7 @@
 238 = backupBlocksWeight
 1178 = backupDoubleWeight
 
-12.9685 = backupBestAStarWeightsScore
+13.0463 = backupBestAStarWeightsScore
 415 = backupLinksWeight
 337 = backupBlocksWeight
 1507 = backupDoubleWeight
@@ -598,12 +608,12 @@
 1732 = backupBlocksWeight
 3601 = backupDoubleWeight
 
-14.6625 = backupBestAStarWeightsScore
+14.9648 = backupBestAStarWeightsScore
 6761 = backupLinksWeight
 673 = backupBlocksWeight
 1178 = backupDoubleWeight
 
-14.3812 = backupBestAStarWeightsScore
+14.6848 = backupBestAStarWeightsScore
 9461 = backupLinksWeight
 382 = backupBlocksWeight
 2682 = backupDoubleWeight
@@ -618,17 +628,17 @@
 450 = backupBlocksWeight
 1267 = backupDoubleWeight
 
-13.6158 = backupBestAStarWeightsScore
+15.3288 = backupBestAStarWeightsScore
 610 = backupLinksWeight
 885 = backupBlocksWeight
 2269 = backupDoubleWeight
 
-14.6991 = backupBestAStarWeightsScore
+14.7059 = backupBestAStarWeightsScore
 6972 = backupLinksWeight
 167 = backupBlocksWeight
 1320 = backupDoubleWeight
 
-13.8928 = backupBestAStarWeightsScore
+13.1106 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 217 = backupBlocksWeight
 1421 = backupDoubleWeight
@@ -648,12 +658,12 @@
 457 = backupBlocksWeight
 1210 = backupDoubleWeight
 
-13.5685 = backupBestAStarWeightsScore
+13.6463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 187 = backupBlocksWeight
 1521 = backupDoubleWeight
 
-13.7915 = backupBestAStarWeightsScore
+13.7848 = backupBestAStarWeightsScore
 9866 = backupLinksWeight
 283 = backupBlocksWeight
 3329 = backupDoubleWeight
@@ -713,7 +723,7 @@
 1285 = backupBlocksWeight
 1342 = backupDoubleWeight
 
-14.9814 = backupBestAStarWeightsScore
+14.9891 = backupBestAStarWeightsScore
 515 = backupLinksWeight
 200 = backupBlocksWeight
 1096 = backupDoubleWeight
@@ -743,7 +753,7 @@
 289 = backupBlocksWeight
 1402 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+13.0463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 211 = backupBlocksWeight
 1527 = backupDoubleWeight
@@ -763,12 +773,12 @@
 616 = backupBlocksWeight
 1150 = backupDoubleWeight
 
-15.0268 = backupBestAStarWeightsScore
+15.0463 = backupBestAStarWeightsScore
 638 = backupLinksWeight
 524 = backupBlocksWeight
 1216 = backupDoubleWeight
 
-15.0463 = backupBestAStarWeightsScore
+14.9301 = backupBestAStarWeightsScore
 589 = backupLinksWeight
 609 = backupBlocksWeight
 1074 = backupDoubleWeight
@@ -777,11 +787,6 @@
 500 = backupLinksWeight
 797 = backupBlocksWeight
 1185 = backupDoubleWeight
-
-16.6848 = backupBestAStarWeightsScore
-7848 = backupLinksWeight
-1353 = backupBlocksWeight
-1198 = backupDoubleWeight
 
 14.9814 = backupBestAStarWeightsScore
 500 = backupLinksWeight
@@ -928,7 +933,7 @@
 1327 = backupBlocksWeight
 1101 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+15.6463 = backupBestAStarWeightsScore
 560 = backupLinksWeight
 1319 = backupBlocksWeight
 1142 = backupDoubleWeight
@@ -948,7 +953,7 @@
 1031 = backupBlocksWeight
 1306 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+13.0463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 1500 = backupBlocksWeight
 1247 = backupDoubleWeight
@@ -1003,12 +1008,12 @@
 210 = backupBlocksWeight
 1091 = backupDoubleWeight
 
-15.0463 = backupBestAStarWeightsScore
+14.9301 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 788 = backupBlocksWeight
 1054 = backupDoubleWeight
 
-13.0463 = backupBestAStarWeightsScore
+12.9301 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 293 = backupBlocksWeight
 1468 = backupDoubleWeight
@@ -1023,17 +1028,17 @@
 462 = backupBlocksWeight
 1279 = backupDoubleWeight
 
-11.6028 = backupBestAStarWeightsScore
+11.6096 = backupBestAStarWeightsScore
 644 = backupLinksWeight
 1026 = backupBlocksWeight
 2279 = backupDoubleWeight
 
-15.0462 = backupBestAStarWeightsScore
+15.0463 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 654 = backupBlocksWeight
 1464 = backupDoubleWeight
 
-15.0976 = backupBestAStarWeightsScore
+15.1053 = backupBestAStarWeightsScore
 828 = backupLinksWeight
 200 = backupBlocksWeight
 1110 = backupDoubleWeight
@@ -1053,7 +1058,7 @@
 534 = backupBlocksWeight
 1220 = backupDoubleWeight
 
-15.0463 = backupBestAStarWeightsScore
+15.0268 = backupBestAStarWeightsScore
 591 = backupLinksWeight
 501 = backupBlocksWeight
 1063 = backupDoubleWeight
@@ -1078,12 +1083,12 @@
 478 = backupBlocksWeight
 1459 = backupDoubleWeight
 
-15.6158 = backupBestAStarWeightsScore
+13.6158 = backupBestAStarWeightsScore
 1262 = backupLinksWeight
 200 = backupBlocksWeight
 2393 = backupDoubleWeight
 
-14.7713 = backupBestAStarWeightsScore
+14.793 = backupBestAStarWeightsScore
 6792 = backupLinksWeight
 3042 = backupBlocksWeight
 1108 = backupDoubleWeight
@@ -1108,12 +1113,12 @@
 788 = backupBlocksWeight
 1063 = backupDoubleWeight
 
-13.5685 = backupBestAStarWeightsScore
+15.6463 = backupBestAStarWeightsScore
 824 = backupLinksWeight
 1190 = backupBlocksWeight
 1264 = backupDoubleWeight
 
-14.9814 = backupBestAStarWeightsScore
+14.9815 = backupBestAStarWeightsScore
 500 = backupLinksWeight
 389 = backupBlocksWeight
 1054 = backupDoubleWeight
@@ -1208,7 +1213,7 @@
 430 = backupBlocksWeight
 220 = backupDoubleWeight
 
-15.9145 = backupBestAStarWeightsScore
+15.908 = backupBestAStarWeightsScore
 1044 = backupLinksWeight
 279 = backupBlocksWeight
 30 = backupDoubleWeight
@@ -1273,7 +1278,7 @@
 1450 = backupBlocksWeight
 1130 = backupDoubleWeight
 
-13.5685 = backupBestAStarWeightsScore
+13.6463 = backupBestAStarWeightsScore
 360 = backupLinksWeight
 1393 = backupBlocksWeight
 1179 = backupDoubleWeight
@@ -1288,7 +1293,7 @@
 1348 = backupBlocksWeight
 1258 = backupDoubleWeight
 
-13.6463 = backupBestAStarWeightsScore
+15.6463 = backupBestAStarWeightsScore
 297 = backupLinksWeight
 1209 = backupBlocksWeight
 1325 = backupDoubleWeight
@@ -1303,8 +1308,18 @@
 1220 = backupBlocksWeight
 1501 = backupDoubleWeight
 
-10.2421 = backupBestAStarWeightsScore
+10.2305 = backupBestAStarWeightsScore
 5041 = backupLinksWeight
 3447 = backupBlocksWeight
 675 = backupDoubleWeight
+
+16.1422 = backupBestAStarWeightsScore
+44 = backupLinksWeight
+44 = backupBlocksWeight
+160 = backupDoubleWeight
+
+18.1744 = backupBestAStarWeightsScore
+39 = backupLinksWeight
+52 = backupBlocksWeight
+152 = backupDoubleWeight
 

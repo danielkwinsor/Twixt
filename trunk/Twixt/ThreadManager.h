@@ -28,9 +28,11 @@ class ThreadOutput
 public:
 	ThreadOutput	();
 	ThreadOutput	(HEAP<MYPoint> const topHeap,
-					bool const buildPath);
+					bool const buildPath,
+					int const pathNumber);
 
 	bool			buildPath;
+	int				pathNumber;
 	HEAP<MYPoint>	topHeap;
 	CPath			pathList;
 };
@@ -67,9 +69,7 @@ public:
 
 	//shared data
 	vector<ThreadInput>		InputQueue;
-	vector<ThreadOutput>	wholePaths;
-	vector<ThreadOutput>	leftPathParts;
-	vector<ThreadOutput>	rightPathParts;
+	list<ThreadOutput>		pathOutputs;
 	bool					threadsAreBusy;
 
 private:

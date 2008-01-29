@@ -208,14 +208,15 @@ int AILogic::GetBestPath(ePlayer const player,
 	bool completeSearch = true;
 	bool buildPathList = false;
 
+	int pathNumber = 0;
 	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
 		StartPeg, DestPeg, destSide, player,
 		true, JumpStartData(startSide, DestPeg, player),
-		completeSearch, 0, buildPathList, currentPlayer));
+		completeSearch, ++pathNumber, buildPathList, currentPlayer));
 	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
 		DestPeg, StartPeg, startSide, player,
 		true, JumpStartData(destSide, StartPeg, player),
-		completeSearch, 0, buildPathList, currentPlayer));
+		completeSearch, ++pathNumber, buildPathList, currentPlayer));
 
 	MYPoint nullPeg;
 	vector<int> LinkGroupList;
@@ -242,10 +243,10 @@ int AILogic::GetBestPath(ePlayer const player,
 
 			//find the paths from this peg to the 2 sides
 			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, DestPeg, destSide, player,
-				jumpStartAStar, JumpStartData(), completeSearch, 1, buildPathList, currentPlayer));
+				jumpStartAStar, JumpStartData(), completeSearch, -(++pathNumber), buildPathList, currentPlayer));
 
 			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, StartPeg, startSide, player,
-				jumpStartAStar, JumpStartData(), completeSearch, 2, buildPathList, currentPlayer));
+				jumpStartAStar, JumpStartData(), completeSearch, -(pathNumber), buildPathList, currentPlayer));
 		}
 	}
 
@@ -800,7 +801,7 @@ void AILogic::DoTurnAndEval(MYPoint* Dest,
 			}
 		}
 	}
-	currentWeightsScore += bestWeightsScore;
+	currentWeightsScore += bestWeightsScore * 0.1f;
 
 	//if we found a solution peg on the path, then we can simulate the rest of the turn
 	if (forceEvalPegsOnPath == true || bestWeightsScore != 0.0f) {
@@ -822,7 +823,7 @@ void AILogic::DoTurnAndEval(MYPoint* Dest,
 
 		EvaluateOffense(path, player);
 
-		AdjustWeights(path, enemyPath, player, opponent);
+		//AdjustWeights(path, enemyPath, player, opponent);
 
 		vector<MYPoint> pegs;
 		vector<int> values;
@@ -893,7 +894,7 @@ void AILogic::DoTurn(MYPoint* Dest,
 
 	EvaluateOffense(path, player);
 
-	AdjustWeights(path, enemyPath, player, opponent);
+	//AdjustWeights(path, enemyPath, player, opponent);
 
 	vector<MYPoint> pegs;
 	vector<int> values;
