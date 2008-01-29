@@ -59,11 +59,12 @@ MYPoint CThreadManager::GetBestPeg()
 		}
 		else {
 			HEAP<MYPoint> leftPathPart = iter->topHeap;
+			++iter;
 			for (list<ThreadOutput>::iterator compare = iter; compare != pathOutputs.end(); ++compare) {
 				HEAP<MYPoint> rightPathPart = compare->topHeap;
 				if (leftPathPart.data == rightPathPart.data) {
 					//set it so we don't search for it again
-					iter->pathNumber = 0;
+					compare->pathNumber = 0;
 					if (leftPathPart.key != -1 && rightPathPart.key != -1) {
 						heap.insertElement(leftPathPart.data, leftPathPart.key + rightPathPart.key);
 					}
