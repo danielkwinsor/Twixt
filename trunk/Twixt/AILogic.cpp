@@ -206,14 +206,14 @@ int AILogic::GetBestPath(ePlayer const player,
 	GetStartData(player, StartPeg, DestPeg, startSide, destSide, &pPegList);
 	bool jumpStartAStar = false;
 	bool completeSearch = true;
-	bool buildPathList = false;
+	bool buildPathList = true;
 
 	int pathNumber = 0;
-	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
+	pThreadManager->PushAStarData(ThreadedWorkChunk(XBoardSize, YBoardSize,
 		StartPeg, DestPeg, destSide, player,
 		true, JumpStartData(startSide, DestPeg, player),
 		completeSearch, ++pathNumber, buildPathList, currentPlayer));
-	pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize,
+	pThreadManager->PushAStarData(ThreadedWorkChunk(XBoardSize, YBoardSize,
 		DestPeg, StartPeg, startSide, player,
 		true, JumpStartData(destSide, StartPeg, player),
 		completeSearch, ++pathNumber, buildPathList, currentPlayer));
@@ -242,16 +242,20 @@ int AILogic::GetBestPath(ePlayer const player,
 			LinkGroupList.push_back(linkGroup);
 
 			//find the paths from this peg to the 2 sides
-			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, DestPeg, destSide, player,
+			pThreadManager->PushAStarData(ThreadedWorkChunk(XBoardSize, YBoardSize, Peg, DestPeg, destSide, player,
 				jumpStartAStar, JumpStartData(), completeSearch, -(++pathNumber), buildPathList, currentPlayer));
 
-			pThreadManager->PushAStarData(ThreadInput(XBoardSize, YBoardSize, Peg, StartPeg, startSide, player,
+			pThreadManager->PushAStarData(ThreadedWorkChunk(XBoardSize, YBoardSize, Peg, StartPeg, startSide, player,
 				jumpStartAStar, JumpStartData(), completeSearch, -(pathNumber), buildPathList, currentPlayer));
 		}
 	}
 
 	pThreadManager->WaitTillDone();
-	MYPoint bestPeg = pThreadManager->GetBestPeg();
+	list<ThreadedWorkChunk> completedWorkChunks;
+	MYPoint bestPeg = pThreadManager->GetBestPeg(&completedWorkChunks);
+#ifdef DEBUG
+	_DebugCompletedWorkChunks(completedWorkChunks);
+#endif
 	pThreadManager->ClearData();
 
 	int pathCost = 0;
@@ -1168,3 +1172,23 @@ int AILogic::GetSetupWeight()
 {
 	return TWOJUMPS / 5;
 }//end GetSetupWeight
+
+void AILogic::_DebugCompletedWorkChunks(list<ThreadedWorkChunk>& completedWorkChunks)
+{
+	int originalXSize = XBoardSize;
+	int originalYSize = YBoardSize;
+	ePlayer originalPlayer = currentPlayer;
+	for each (ThreadedWorkChunk workChunk in completedWorkChunks) {
+		//TODO bugged
+		ResetAStarList();
+		SetBoardSize(workChunk.xSize, workChunk.ySize);
+		currentPlayer = workChunk.currentPlayer;
+		HEAP<MYPoint> topHeap = AStar(workChunk.StartPeg, workChunk.DestPeg, workChunk.player, NOTASIDE, workChunk.completeSearch);
+		CPath comparisonPath;
+		comparisonPath.BuildPathList(topHeap.data, NOTASIDE, workChunk.StartPeg, *this);
+	}
+	ResetAStarList();
+	SetBoardSize(originalXSize, originalYSize);
+	currentPlayer = originalPlayer;
+	return;
+}

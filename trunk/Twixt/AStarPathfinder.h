@@ -38,6 +38,8 @@ public:
 
 	void	OrderLinks		(eSides const side);
 
+	void	MergePathList	(const CPath& otherPath);
+
 private:
 	int		GetBestDistance	(const CLink& link,
 							const CLink& compare) const;
@@ -55,9 +57,16 @@ public:
 		int const YBoardSize);
 
 	vector<MYPoint>			ClosedList;
-	CBinaryHeap<MYPoint>		OpenHeap;
+	CBinaryHeap<MYPoint>	OpenHeap;
 
 	HEAP<MYPoint>	AStar	(const MYPoint& Source,
+							const MYPoint& Dest,
+							ePlayer const player,
+							eSides const DestSide,
+							bool const completeSearch);
+
+	HEAP<MYPoint>	_DebugPath(const CPath& path,
+							const MYPoint& Source,
 							const MYPoint& Dest,
 							ePlayer const player,
 							eSides const DestSide,

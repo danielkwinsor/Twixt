@@ -4,11 +4,15 @@
 
 class CMainWindow;
 
-class ThreadInput
+class ThreadedWorkChunk
 {
 public:
-	ThreadInput(){return;};
-	ThreadInput(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer);
+	ThreadedWorkChunk(){return;};
+	ThreadedWorkChunk(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int pathNumber, bool buildPath, ePlayer currentPlayer);
+
+	bool		BuildPathFromParts(ThreadedWorkChunk& otherPart);
+
+	//input:
 	int			xSize;
 	int			ySize;
 	MYPoint		StartPeg;
@@ -18,21 +22,11 @@ public:
 	bool		jumpStart;
 	JumpStartData jumpStartData;
 	bool		completeSearch;
-	int			outputNum;
+	int			pathNumber;
 	bool		buildPath;
 	ePlayer		currentPlayer;
-};
 
-class ThreadOutput
-{
-public:
-	ThreadOutput	();
-	ThreadOutput	(HEAP<MYPoint> const topHeap,
-					bool const buildPath,
-					int const pathNumber);
-
-	bool			buildPath;
-	int				pathNumber;
+	//output:
 	HEAP<MYPoint>	topHeap;
 	CPath			pathList;
 };
@@ -58,19 +52,21 @@ public:
 
 	void	ClearData		();
 
-	void	PushAStarData	(ThreadInput const input);
+	void	PushAStarData	(ThreadedWorkChunk const workChunk);
 
 	bool	WaitTillDone	();
 
-	MYPoint	GetBestPeg		();
+	MYPoint	GetBestPeg		(std::list<ThreadedWorkChunk>* pCompletedWorkChunks = NULL);
+
+	void	OrderAndGroupWorkChunks(std::list<ThreadedWorkChunk>* pCompletedWorkChunks = NULL);
 
 	bool	isBusy			();
 
 
 	//shared data
-	vector<ThreadInput>		InputQueue;
-	list<ThreadOutput>		pathOutputs;
-	bool					threadsAreBusy;
+	vector<ThreadedWorkChunk>	InputQueue;
+	list<ThreadedWorkChunk>		pathOutputs;
+	bool						threadsAreBusy;
 
 private:
 	int						maxThreads;

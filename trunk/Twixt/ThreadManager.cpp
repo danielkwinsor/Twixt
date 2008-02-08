@@ -9,6 +9,26 @@ boost::mutex			outputMutex;
 boost::mutex			Thread1Mutex;
 boost::mutex			Thread2Mutex;
 
+bool ThreadedWorkChunk::BuildPathFromParts(ThreadedWorkChunk &otherPart)
+{
+	if (pathNumber == otherPart.pathNumber && pathNumber < 0) {
+		if (topHeap.key != -1 && otherPart.topHeap.key != -1) {
+			if (pathList.empty() == false) {
+				pathNumber = -pathNumber;
+				//TODO bugged
+				this->StartPeg = this->pathList.front().GetDestFromDir();
+				this->DestPeg = otherPart.pathList.front().GetDestFromDir();
+				this->topHeap = HEAP<MYPoint>(this->StartPeg, this->topHeap.key + otherPart.topHeap.key);
+				this->destSide = otherPart.destSide;
+				//this->jumpStartData // probably don't need to set this
+				this->pathList.MergePathList(otherPart.pathList);
+				return true;
+			}
+		}
+	}
+	return false;
+}//end BuildPathFromParts
+
 CThreadManager::~CThreadManager()
 {
 	Destroy();
@@ -45,8 +65,13 @@ void CThreadManager::ClearData()
 	return;
 }//end ClearData
 
-MYPoint CThreadManager::GetBestPeg()
+MYPoint CThreadManager::GetBestPeg(list<ThreadedWorkChunk>* pCompletedWorkChunks)
 {
+<<<<<<< .mine
+	list<ThreadedWorkChunk> completedWorkChunks;
+	if (pCompletedWorkChunks == NULL) {
+		pCompletedWorkChunks = &completedWorkChunks;
+=======
 	for (list<ThreadOutput>::iterator iter = pathOutputs.begin(); iter != pathOutputs.end(); ++iter) {
 		if (iter->pathNumber > 0) {
 			HEAP<MYPoint> wholePath = iter->topHeap;
@@ -72,11 +97,17 @@ MYPoint CThreadManager::GetBestPeg()
 				}
 			}
 		}
+>>>>>>> .r9
 	}
+	OrderAndGroupWorkChunks(pCompletedWorkChunks);
 
+	for (list<ThreadedWorkChunk>::iterator iter = pCompletedWorkChunks->begin(); iter != pCompletedWorkChunks->end(); ++iter) {
+		heap.insertElement(iter->topHeap.data, iter->topHeap.key);
+	}
 
 #ifdef DEBUG
 	ofstream file("BestPathPegs.txt");
+	file << heap.size();
 	for (CBinaryHeap<MYPoint>::Iterator iter = heap.begin(); iter != heap.end(); ++iter) {
 		file << '\n' << (int)(iter->data.x) << '\t' << (int)(iter->data.y) << '\t' << (iter->key);
 	}
@@ -89,6 +120,40 @@ MYPoint CThreadManager::GetBestPeg()
 		return MYPoint(0,0);
 	}
 }//end GetBestPeg
+
+void CThreadManager::OrderAndGroupWorkChunks(std::list<ThreadedWorkChunk> *pCompletedWorkChunks)
+{
+	int pathNumber = 0;
+	while (pathOutputs.empty() == false) {
+		++pathNumber;
+		for (list<ThreadedWorkChunk>::iterator iter = pathOutputs.begin(); iter != pathOutputs.end(); ++iter) {
+			if (iter->pathNumber == pathNumber) {
+				if (iter->topHeap.key != -1) {
+					pCompletedWorkChunks->push_back(*iter);
+				}
+				iter = pathOutputs.erase(iter);
+				break;
+			}
+			else if (iter->pathNumber == -pathNumber) {
+				ThreadedWorkChunk wholePath = *iter;
+				iter = pathOutputs.erase(iter);
+				for (list<ThreadedWorkChunk>::iterator compare = iter; compare != pathOutputs.end(); ++compare) {
+					if (iter->pathNumber == compare->pathNumber) {
+						if (wholePath.topHeap.key != -1 && compare->topHeap.key != -1) {
+							if (wholePath.BuildPathFromParts(*compare) == true) {
+								pCompletedWorkChunks->push_back(wholePath);
+							}
+						}
+						iter = compare = pathOutputs.erase(compare);
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+	return;
+}//end OrderAndGroupWorkChunks
 
 bool CThreadManager::WaitTillDone()
 {
@@ -108,30 +173,22 @@ bool CThreadManager::WaitTillDone()
 	}
 }//end WaitTillDone
 
-ThreadInput::ThreadInput(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int outputNum, bool buildPath, ePlayer currentPlayer)
+ThreadedWorkChunk::ThreadedWorkChunk(int xSize, int ySize, MYPoint StartPeg, MYPoint DestPeg, eSides destSide, ePlayer player, bool jumpStart, JumpStartData jumpStartData, bool completeSearch, int pathNumber, bool buildPath, ePlayer currentPlayer)
 {
-	ThreadInput::xSize = xSize;
-	ThreadInput::ySize = ySize;
-	ThreadInput::StartPeg = StartPeg;
-	ThreadInput::DestPeg = DestPeg;
-	ThreadInput::destSide = destSide;
-	ThreadInput::player = player;
-	ThreadInput::completeSearch = completeSearch;
-	ThreadInput::jumpStart = jumpStart;
-	ThreadInput::jumpStartData = jumpStartData;
-	ThreadInput::outputNum = outputNum;
-	ThreadInput::buildPath = buildPath;
-	ThreadInput::currentPlayer = currentPlayer;
-	return;
-}//end ctor
+	ThreadedWorkChunk::xSize = xSize;
+	ThreadedWorkChunk::ySize = ySize;
+	ThreadedWorkChunk::StartPeg = StartPeg;
+	ThreadedWorkChunk::DestPeg = DestPeg;
+	ThreadedWorkChunk::destSide = destSide;
+	ThreadedWorkChunk::player = player;
+	ThreadedWorkChunk::completeSearch = completeSearch;
+	ThreadedWorkChunk::jumpStart = jumpStart;
+	ThreadedWorkChunk::jumpStartData = jumpStartData;
+	ThreadedWorkChunk::pathNumber = pathNumber;
+	ThreadedWorkChunk::buildPath = buildPath;
+	ThreadedWorkChunk::currentPlayer = currentPlayer;
 
-ThreadOutput::ThreadOutput(HEAP<MYPoint> const topHeap,
-						   bool const buildPath,
-						   int const pathNumber)
-{
-	ThreadOutput::pathNumber = pathNumber;
-	ThreadOutput::topHeap = topHeap;
-	ThreadOutput::buildPath = buildPath;
+	topHeap = HEAP<MYPoint, int>();
 	return;
 }//end ctor
 
@@ -194,10 +251,10 @@ void CThreadManager::StopTrainingAIWeights()
 	currentlyTrainingAIWeights = false;
 }
 
-void CThreadManager::PushAStarData(ThreadInput const input)
+void CThreadManager::PushAStarData(ThreadedWorkChunk const workChunk)
 {
 	boost::mutex::scoped_lock lock(inputMutex);
-	InputQueue.push_back(input);
+	InputQueue.push_back(workChunk);
 	threadsAreBusy = true;
 	return;
 }//end PushAStarData
@@ -209,38 +266,36 @@ void ExecuteThread(SharedAStarData (*SharedBoard)[MAXBOARDSIZE][MAXBOARDSIZE],
 				   int const YBoardSize)
 {
 	AStarPathfinder AStar(SharedBoard, XBoardSize, YBoardSize);
-	vector<ThreadInput>* pInputQueue = &(pThreadManager->InputQueue);
+	vector<ThreadedWorkChunk>* pInputQueue = &(pThreadManager->InputQueue);
 	for(;;) {
 		bool wait = true;
 		boost::mutex::scoped_lock inputLock(inputMutex);
 		if (pInputQueue->empty() == false) {
-			ThreadInput input = pInputQueue->back();
+			ThreadedWorkChunk workChunk = pInputQueue->back();
 			pInputQueue->pop_back();
 			boost::mutex::scoped_lock threadLock(*pThreadLock);
 			inputLock.unlock();
 			AStar.ResetAStarList();
-			AStar.SetBoardSize(input.xSize, input.ySize);
-			AStar.currentPlayer = input.currentPlayer;
+			AStar.SetBoardSize(workChunk.xSize, workChunk.ySize);
+			AStar.currentPlayer = workChunk.currentPlayer;
 
-			if (input.jumpStart) {
-				AStar.JumpStartAStar(input.jumpStartData);
+			if (workChunk.jumpStart) {
+				AStar.JumpStartAStar(workChunk.jumpStartData);
 			}
-			HEAP<MYPoint> topHeap = AStar.AStar(input.StartPeg, input.DestPeg,
-				input.player, input.destSide, input.completeSearch);
+			workChunk.topHeap = AStar.AStar(workChunk.StartPeg, workChunk.DestPeg,
+				workChunk.player, workChunk.destSide, workChunk.completeSearch);
 
-			ThreadOutput threadOutput(topHeap, input.buildPath, input.outputNum);
-			if (input.buildPath == true) {
-				if (topHeap.key != -1) {//only build a path if a path was found!
-					threadOutput.pathList.BuildPathList(topHeap.data,
-						input.jumpStartData.startSide, input.StartPeg, AStar);
+			if (workChunk.buildPath == true) {
+				if (workChunk.topHeap.key != -1) {//only build a path if a path was found!
+					workChunk.pathList.BuildPathList(workChunk.topHeap.data,
+						workChunk.jumpStartData.startSide, workChunk.StartPeg, AStar);
 				}
 			}
-			else {
-				threadOutput.topHeap.data = input.StartPeg;
-			}
+			//can't sort by dest peg, must sort by start peg
+			workChunk.topHeap.data = workChunk.StartPeg;
 
 			boost::mutex::scoped_lock outputLock(outputMutex);
-			pThreadManager->pathOutputs.push_back(threadOutput);
+			pThreadManager->pathOutputs.push_back(workChunk);
 			wait = false;
 		}
 		else {

@@ -247,6 +247,16 @@ void CPath::BuildPathList(const MYPoint& LastStep,
 	return;
 }//end BuildPathList
 
+void CPath::MergePathList(const CPath& otherPath)
+{
+	bool wasEmpty = this->empty();
+	for each (CLink link in otherPath) {
+		this->InsertIntoPathList(link.GetReversedLink(), wasEmpty);
+	}
+
+	return;
+}
+
 void CPath::InsertIntoPathList(const CLink& link,
 							   bool const wasEmpty)
 {
@@ -543,7 +553,7 @@ bool AStarPathfinder::ExecuteAStarLogic(const MYPoint& Source,
 	}
 
 	int		SourceG = GetAStarG(Source);
-	int		DestAStarG = GetAStarG(Dest);
+	//int		DestAStarG = GetAStarG(Dest);
 	int		DestAStarH = CalcH(Dest, DestForCalcH, DestSide, player);
 	int		JumpH = CalcJumpH(link, player);
 	int		DestAStarF = 0;
@@ -553,38 +563,35 @@ bool AStarPathfinder::ExecuteAStarLogic(const MYPoint& Source,
 	int		links = 0;
 	int		blocks = 0;
 
+
+	//there are 2 cases where we would do the AStar logic, new unexpanded peg, and expanded peg that needs to be updated
+	int comparison;
 	if ((AStarStatus == AStar_Init) &&
 		(isDestBlocked(Source, jump, player) == false)) {
-		//calculate the AStar elements for this peg
-		SetAStarG(Dest, SourceG + JumpH);
-		SetAStarH(Dest, DestAStarH);
-		DestAStarF = SourceG + DestAStarH + JumpH;
-		if (completeSearch == true) {
-			CountLinksAndBlocks(Dest, player, &links, &blocks);
-			DestAStarF -= links * GetAStarLinkWeight();
-			DestAStarF -= blocks * GetAStarBlockWeight();
-			DestAStarF -= CountDoubles(Dest, player) * GetAStarDoubleSetupWeight();
-		}
-		else {
-			links = CountLinks(Dest, player);
-			DestAStarF -= links * GetAStarLinkWeight();
-		}
-		SetAStarF(Dest, DestAStarF);
-
-		SetAStarLink(Dest, link);
-		//the dest peg is in the initialization state, change to open
-		SetAStarStatus(Dest, AStar_Open);
-		//insert this AStar element into the heap
-		insertUpdate = true;
+		//if the peg has not be found as an open peg, and the jump
+		//is non blocked, then calculate the AStar elements for this peg
 		performLogic = true;
 
+		//the dest peg is in the initialization state, change to open
+		SetAStarStatus(Dest, AStar_Open);
+
+		//insert this AStar element into the heap
+		insertUpdate = true;
+		comparison = 99999999;//force the comparison to be true
 	}
 	else if ((AStarStatus == AStar_Open) && 
-		(DestAStarG > SourceG + JumpH)) {
-		//if dest has already been found as an open peg, and the source peg path
-		//is shorter than the destination's previous path, then update it
+		(GetAStarG(Dest) > SourceG + JumpH)) {
+		//if the peg has already been found as an open peg, and the source peg path is
+		//shorter than the destination's previous path, then update the AStar elements for this peg
+		performLogic = true;
 
-		//update the AStar elements for this peg
+		//update the heap with the new AStar elements
+		insertUpdate = false;
+		comparison = OriginalDestAStarF;
+	}
+
+
+	if (performLogic == true) {
 		SetAStarG(Dest, SourceG + JumpH);
 		SetAStarH(Dest, DestAStarH);
 		DestAStarF = SourceG + DestAStarH + JumpH;
@@ -598,21 +605,19 @@ bool AStarPathfinder::ExecuteAStarLogic(const MYPoint& Source,
 			links = CountLinks(Dest, player);
 			DestAStarF -= links * GetAStarLinkWeight();
 		}
-		SetAStarF(Dest, DestAStarF);
 
-		SetAStarLink(Dest, link);
-		if (DestAStarF <= OriginalDestAStarF) {
-			//update the heap with the new AStar elements
-			insertUpdate = false;
-			performLogic = true;
-		}
-	}
-	if (performLogic) {
-		if (insertUpdate) {
-			OpenHeap.insertElement(Dest, DestAStarF);
-		}
-		else {
-			OpenHeap.editElement(Dest, Dest, OriginalDestAStarF, DestAStarF);
+		//this is applicable only if updating (otherwise the condition defaults to true)
+		//if we are updating, is the new AStarF better than the old AStarF?
+		if (DestAStarF <= comparison) {
+			SetAStarF(Dest, DestAStarF);
+			SetAStarLink(Dest, link);
+
+			if (insertUpdate) {
+				OpenHeap.insertElement(Dest, DestAStarF);
+			}
+			else {
+				OpenHeap.editElement(Dest, Dest, OriginalDestAStarF, DestAStarF);
+			}
 		}
 	}
 
@@ -639,6 +644,46 @@ void AStarPathfinder::ResetAStarList()
 	OpenHeap.clear();
 	return;
 }//end ResetAStarList
+
+HEAP<MYPoint> AStarPathfinder::_DebugPath(const CPath& path,
+										  const MYPoint& SourcePeg,
+										  const MYPoint& DestPeg,
+										  ePlayer const player,
+										  eSides const DestSide,
+										  bool const completeSearch)
+{
+	PERFORMANCE_MARKER;
+	for each (CLink link in path) {
+
+		MYPoint Source = link.startPeg;
+		MYPoint Dest = link.GetDestFromDir();
+
+		int		SourceG = GetAStarG(Source);
+		//int		DestAStarG = GetAStarG(Dest);
+		int		DestAStarH = CalcH(Dest, DestPeg, DestSide, player);
+		int		JumpH = CalcJumpH(link, player);
+		int		DestAStarF = 0;
+		//int		OriginalDestAStarF = GetAStarF(Dest);
+		int		links = 0;
+		int		blocks = 0;
+
+		//SetAStarG(Dest, SourceG + JumpH);
+		//SetAStarH(Dest, DestAStarH);
+		DestAStarF = SourceG + DestAStarH + JumpH;
+		if (completeSearch == true) {
+			CountLinksAndBlocks(Dest, player, &links, &blocks);
+			DestAStarF -= links * GetAStarLinkWeight();
+			DestAStarF -= blocks * GetAStarBlockWeight();
+			DestAStarF -= CountDoubles(Dest, player) * GetAStarDoubleSetupWeight();
+		}
+		else {
+			links = CountLinks(Dest, player);
+			DestAStarF -= links * GetAStarLinkWeight();
+		}
+	}
+
+	return HEAP<MYPoint>();
+}//end _DebugPath
 
 HEAP<MYPoint> AStarPathfinder::AStar(const MYPoint& Source,
 									const MYPoint& Dest,

@@ -162,6 +162,7 @@ private:
 							ePlayer const player,
 							const CPath& EnemyIntersection);
 
+	void	_DebugCompletedWorkChunks(list<ThreadedWorkChunk>& completedWorkChunks);
 };
 
 #endif
