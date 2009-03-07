@@ -49,6 +49,7 @@ protected:
 	afx_msg void OnKeyDown (UINT nChar, UINT nRepeatCount, UINT nFlags);
 	afx_msg void OnLButtonDown (UINT nFlags, CPoint mousePoint);
 	afx_msg void OnRButtonDown (UINT nFlags, CPoint mousePoint);
+	afx_msg BOOL OnEraseBkgnd( CDC * );
     DECLARE_MESSAGE_MAP ()
 
 	void	OnGameWon	(ePlayer const player);

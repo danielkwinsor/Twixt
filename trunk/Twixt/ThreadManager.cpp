@@ -67,37 +67,9 @@ void CThreadManager::ClearData()
 
 MYPoint CThreadManager::GetBestPeg(list<ThreadedWorkChunk>* pCompletedWorkChunks)
 {
-<<<<<<< .mine
 	list<ThreadedWorkChunk> completedWorkChunks;
 	if (pCompletedWorkChunks == NULL) {
 		pCompletedWorkChunks = &completedWorkChunks;
-=======
-	for (list<ThreadOutput>::iterator iter = pathOutputs.begin(); iter != pathOutputs.end(); ++iter) {
-		if (iter->pathNumber > 0) {
-			HEAP<MYPoint> wholePath = iter->topHeap;
-			if (wholePath.key != -1) {
-				heap.insertElement(wholePath.data, wholePath.key);
-			}
-		}
-		else if (iter->pathNumber == 0) {
-			continue;
-		}
-		else {
-			HEAP<MYPoint> leftPathPart = iter->topHeap;
-			++iter;
-			for (list<ThreadOutput>::iterator compare = iter; compare != pathOutputs.end(); ++compare) {
-				HEAP<MYPoint> rightPathPart = compare->topHeap;
-				if (leftPathPart.data == rightPathPart.data) {
-					//set it so we don't search for it again
-					compare->pathNumber = 0;
-					if (leftPathPart.key != -1 && rightPathPart.key != -1) {
-						heap.insertElement(leftPathPart.data, leftPathPart.key + rightPathPart.key);
-					}
-					break;
-				}
-			}
-		}
->>>>>>> .r9
 	}
 	OrderAndGroupWorkChunks(pCompletedWorkChunks);
 

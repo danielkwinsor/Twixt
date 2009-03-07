@@ -28,12 +28,18 @@ BEGIN_MESSAGE_MAP (CMainWindow, CFrameWnd)
 	ON_COMMAND (ID_WINDOW_BOARD, OnWindowBoard)
 	ON_COMMAND (ID_WINDOW_SCREEN, OnWindowScreen)
 	ON_COMMAND_RANGE (ID_SHOWF, ID_SHOW_NEWEST, OnShow)
+	ON_WM_ERASEBKGND ()
 END_MESSAGE_MAP ()
 
 BEGIN_MESSAGE_MAP(CDialogNewGame, CDialog)
 	ON_BN_CLICKED(IDOK, OnOK)
 	ON_BN_CLICKED(IDD_DEFAULT, OnDefault)
 END_MESSAGE_MAP()
+
+BOOL CMainWindow::OnEraseBkgnd(CDC *)
+{
+	return false;
+}
 
 CMainWindow::CMainWindow()
 {
@@ -2042,7 +2048,6 @@ void CDialogNewGame::OnDefault()
 
 BOOL CDialogNewGame::OnInitDialog() 
 {
-	//TODO fix bug
 	CDialog::OnInitDialog();
 	SetDlgItemInt(IDC_EDITSIZE, size);
 	SetDlgItemInt(IDC_NUMTHREADS, numThreads);
@@ -2077,7 +2082,6 @@ CDialogNewGame::CDialogNewGame(CWnd* pParent /*=NULL*/)
 {
 	size = DEFAULTBOARDSIZE;
 	numThreads = DEFAULTNUMTHREADS;
-	OnInitDialog();
 }
 
 
