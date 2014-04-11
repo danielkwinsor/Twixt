@@ -1,0 +1,175 @@
+4
+4289915024
+
+4
+3680830720
+
+4
+3677182592
+
+4
+3671177080
+
+
+4
+3732176968
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.text:00401000 CBinaryHeap_int___insertElement proc near ; CODE XREF: _main+40p
+.text:00401000                                         ; _main+4Dp ...
+.text:00401000
+.text:00401000 arg_0           = dword ptr  4
+.text:00401000 arg_4           = dword ptr  8
+.text:00401000
+.text:00401000                 push    esi
+.text:00401001                 mov     esi, [ecx]
+.text:00401003                 cmp     esi, [ecx+4]
+.text:00401006                 jle     short loc_40100E
+.text:00401008                 xor     eax, eax
+.text:0040100A                 pop     esi
+.text:0040100B                 retn    8
+.text:0040100E ; ---------------------------------------------------------------------------
+.text:0040100E
+.text:0040100E loc_40100E:                             ; CODE XREF: CBinaryHeap_int___insertElement+6j
+.text:0040100E                 cmp     esi, 1
+.text:00401011                 push    edi
+.text:00401012                 mov     edi, [esp+8+arg_4]
+.text:00401016                 jle     short loc_401042
+.text:00401018                 push    ebx
+.text:00401019                 lea     esp, [esp+0]
+.text:00401020
+.text:00401020 loc_401020:                             ; CODE XREF: CBinaryHeap_int___insertElement+3Fj
+.text:00401020                 mov     edx, [ecx+8]
+.text:00401023                 mov     eax, esi
+.text:00401025                 sar     eax, 1
+.text:00401027                 cmp     [edx+eax*8], edi
+.text:0040102A                 jle     short loc_401041
+.text:0040102C                 cmp     eax, 1
+.text:0040102F                 mov     ebx, [edx+eax*8]
+.text:00401032                 mov     [edx+esi*8], ebx
+.text:00401035                 mov     ebx, [edx+eax*8+4]
+.text:00401039                 mov     [edx+esi*8+4], ebx
+.text:0040103D                 mov     esi, eax
+.text:0040103F                 jg      short loc_401020
+.text:00401041
+.text:00401041 loc_401041:                             ; CODE XREF: CBinaryHeap_int___insertElement+2Aj
+.text:00401041                 pop     ebx
+.text:00401042
+.text:00401042 loc_401042:                             ; CODE XREF: CBinaryHeap_int___insertElement+16j
+.text:00401042                 mov     eax, [ecx+8]
+.text:00401045                 mov     edx, [esp+8+arg_0]
+.text:00401049                 mov     [eax+esi*8+4], edx
+.text:0040104D                 mov     eax, [ecx+8]
+.text:00401050                 mov     [eax+esi*8], edi
+.text:00401053                 mov     eax, [ecx]
+.text:00401055                 lea     edx, [eax+1]
+.text:00401058                 pop     edi
+.text:00401059                 mov     [ecx], edx
+.text:0040105B                 pop     esi
+.text:0040105C                 retn    8
+.text:0040105C CBinaryHeap_int___insertElement endp
+
+
+
+
+
+
+
+
+
+
+
+
+
+.text:00401000 CBinaryHeap_int___insertElement proc near ; CODE XREF: _main+40p
+.text:00401000                                         ; _main+4Dp ...
+.text:00401000
+.text:00401000 var_4           = dword ptr -4
+.text:00401000 arg_0           = dword ptr  8
+.text:00401000 arg_4           = dword ptr  0Ch
+.text:00401000
+.text:00401000                 push    ebp
+.text:00401001                 mov     ebp, esp
+.text:00401003                 push    ecx
+.text:00401004                 mov     eax, [ecx]
+.text:00401006                 cmp     eax, [ecx+4]
+.text:00401009                 mov     [ebp+var_4], ecx
+.text:0040100C                 jle     short loc_401016
+.text:0040100E                 xor     eax, eax
+.text:00401010                 mov     esp, ebp
+.text:00401012                 pop     ebp
+.text:00401013                 retn    8
+.text:00401016 ; ---------------------------------------------------------------------------
+.text:00401016
+.text:00401016 loc_401016:                             ; CODE XREF: CBinaryHeap_int___insertElement+Cj
+.text:00401016                 push    ebx
+.text:00401017                 push    esi
+.text:00401018                 mov     edx, [ebp+var_4]
+.text:0040101B                 mov     eax, [edx]
+.text:0040101D                 mov     edx, [edx+8]
+.text:00401020                 mov     ecx, [ebp+arg_4]
+.text:00401023                 cmp     eax, 1
+.text:00401026                 jle     short loc_401046
+.text:00401028
+.text:00401028 loc_401028:                             ; CODE XREF: CBinaryHeap_int___insertElement+44j
+.text:00401028                 mov     esi, eax
+.text:0040102A                 sar     esi, 1
+.text:0040102C                 cmp     [edx+esi*8], ecx
+.text:0040102F                 jle     short loc_401046
+.text:00401031                 cmp     esi, 1
+.text:00401034                 mov     ebx, [edx+esi*8]
+.text:00401037                 mov     [edx+eax*8], ebx
+.text:0040103A                 mov     ebx, [edx+esi*8+4]
+.text:0040103E                 mov     [edx+eax*8+4], ebx
+.text:00401042                 mov     eax, esi
+.text:00401044                 jg      short loc_401028
+.text:00401046
+.text:00401046 loc_401046:                             ; CODE XREF: CBinaryHeap_int___insertElement+26j
+.text:00401046                                         ; CBinaryHeap_int___insertElement+2Fj
+.text:00401046                 mov     esi, [ebp+arg_0]
+.text:00401049                 mov     [edx+eax*8+4], esi
+.text:0040104D                 mov     [edx+eax*8], ecx
+.text:00401050                 mov     edx, [ebp+var_4]
+.text:00401053                 mov     eax, [edx]
+.text:00401055                 mov     ecx, eax
+.text:00401057                 inc     ecx
+.text:00401058                 mov     [edx], ecx
+.text:0040105A                 pop     esi
+.text:0040105B                 pop     ebx
+.text:0040105C                 mov     esp, ebp
+.text:0040105E                 pop     ebp
+.text:0040105F                 retn    8
+.text:0040105F CBinaryHeap_int___insertElement endp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

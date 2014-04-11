@@ -1,0 +1,210 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New Game",                   ID_GAME_NEW
+        MENUITEM "&Load Game",                  ID_GAME_LOAD
+        MENUITEM "Load Scenario",               ID_SCEN_LOAD
+        MENUITEM "&Save Game",                  ID_GAME_SAVE
+        MENUITEM "Save &As",                    ID_GAME_SAVEAS
+        MENUITEM "E&xit",                       ID_EXIT_APP
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "Default Peg Size",            ID_WINDOW_DEFAULT, CHECKED
+        MENUITEM "Fit Board To Window",         ID_WINDOW_BOARD
+        MENUITEM "Fit Board To Screen",         ID_WINDOW_SCREEN
+    END
+    POPUP "Debugging"
+    BEGIN
+        MENUITEM "Show F",                      ID_SHOWF
+        MENUITEM "Show G",                      ID_SHOWG
+        MENUITEM "Show H",                      ID_SHOWH
+        MENUITEM "Show Best Path",              ID_SHOW_BEST_PATH
+        MENUITEM "Show Parent",                 ID_SHOW_PARENT
+        MENUITEM "Show Links",                  ID_SHOW_LINKS, CHECKED
+        MENUITEM "Show Searched",               ID_SHOW_SEARCHED
+        MENUITEM "Show Newest",                 ID_SHOW_NEWEST
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_OPTION DIALOG DISCARDABLE  0, 0, 214, 198
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "New Game Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,157,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,157,24,50,14
+    PUSHBUTTON      "Default",IDD_DEFAULT,157,43,50,14
+
+    GROUPBOX        "Board Settings",IDC_STATIC,7,7,121,76
+    LTEXT           "Board Size",IDC_STATIC,18,17,40,8
+    EDITTEXT        IDC_EDITSIZE,77,15,23,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "AI Threads",IDC_STATIC,18,37,40,8
+    EDITTEXT        IDC_NUMTHREADS,77,35,23,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "Difficulty",IDC_STATIC,18,57,40,8
+    COMBOBOX        IDC_DIFFICULTY,77,55,44,40,CBS_DROPDOWNLIST
+
+    GROUPBOX        "Players",IDC_STATIC,7,88,122,103
+    LTEXT           "Red is played by:",IDC_STATIC,13,98,55,8
+    CONTROL         "Player 1",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON,81,97,
+                    41,10
+    CONTROL         "Computer",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,81,110,
+                    46,10
+
+    LTEXT           "Black is played by:",IDC_STATIC,13,132,60,8
+    CONTROL         "Player 2",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,81,132,41,10
+    CONTROL         "Computer",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,81,145,
+                    45,10
+
+    LTEXT           "Player going first:",IDC_STATIC,13,166,60,8
+    CONTROL         "Red",IDC_RADIO5,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,81,167,41,10
+    CONTROL         "Black",IDC_RADIO6,"Button",BS_AUTORADIOBUTTON,81,180,
+                    45,10
+END
+
+IDD_NOT_RECENTLY_SAVED DIALOG DISCARDABLE  0, 0, 287, 48
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Save or Continue?"
+FONT 10, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,230,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,230,24,50,14
+    LTEXT           "You are starting or loading a game without saving recently made changes.\nPress OK to save the current game then start or load a game.\nPress Cancel to continue starting or loading and lose all unsaved data.  ",
+                    IDC_STATIC,7,7,221,34,SS_SUNKEN
+END
+
+IDD_REDWON DIALOG DISCARDABLE  0, 0, 173, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Game Over"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "New Game",IDOK,116,7,50,14
+    PUSHBUTTON      "Continue",IDCANCEL,116,24,50,14
+	CTEXT           "Player: Red has won!\nPlay again?",IDC_REDWON,22,18,82,
+                    30
+END
+
+IDD_BLACKWON DIALOG DISCARDABLE  0, 0, 173, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "Game Over"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "New Game",IDOK,116,7,50,14
+    PUSHBUTTON      "Continue",IDCANCEL,116,24,50,14
+	CTEXT           "Player: Black has won!\nPlay again?",IDC_BLACKWON,22,18,82,
+                    30
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_OPTION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 207
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 191
+    END
+
+    IDD_NOT_RECENTLY_SAVED, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 41
+    END
+
+    IDD_WON, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 166
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

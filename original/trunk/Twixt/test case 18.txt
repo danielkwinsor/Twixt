@@ -1,0 +1,19 @@
+F
+E 6 W
+F 8 W
+E 10 W
+D 12 W
+G 3 W
+I 2 W
+K 5 W
+L 3 W
+D 5 B
+F 4 B
+G 4 B
+H 6 B
+I 3 B
+H 9 B
+J 8 B
+K 6 B
+L 4 B END
+G 7 1
