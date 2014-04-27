@@ -1,36 +1,20 @@
 package daniel.winsor.twixt.domain.board;
 
-import daniel.winsor.twixt.domain.Hole;
-import daniel.winsor.twixt.domain.Team;
+import static daniel.winsor.twixt.domain.board.BoardType.STANDARD_24;
 
-public class StandardBoard implements IBoardFormat {
+public class StandardBoard extends AbstractBoard implements IBoardFormat {
     @Override
     public int getMaxXSize() {
-        // TODO Auto-generated method stub
-        return 0;
+        return 24;
     }
 
     @Override
     public int getMaxYSize() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public boolean isInsideBoard(Hole hole) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isBehindFinishLine(Hole hole, Team team) {
-        // TODO Auto-generated method stub
-        return false;
+        return 24;
     }
 
     @Override
     public BoardType getBoardType() {
-        // TODO Auto-generated method stub
-        return null;
+        return STANDARD_24;
     }
 }

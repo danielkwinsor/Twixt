@@ -7,7 +7,7 @@ public interface IGap {
     
     public abstract GapType getType();
     
-    public abstract Direction getPathDirection(PathType path);
+    public abstract Direction getPathDirection(final PathType path);
     
     public abstract IGap getReversedGap();
     

@@ -14,7 +14,7 @@ public final class Gap implements IGap {
     private GapType type;
     private Direction direction;
     
-    public Gap(GapType type, Direction direction) {
+    public Gap(final GapType type, final Direction direction) {
         setType(type);
         setDirection(direction);
     }
@@ -27,7 +27,7 @@ public final class Gap implements IGap {
         return direction;
     }
     
-    private void setDirection(Direction direction) {
+    private void setDirection(final Direction direction) {
         this.direction = direction;
     }
     
@@ -39,7 +39,7 @@ public final class Gap implements IGap {
         return type;
     }
     
-    private void setType(GapType type) {
+    private void setType(final GapType type) {
         this.type = type;
     }
     
@@ -47,7 +47,7 @@ public final class Gap implements IGap {
      * @see daniel.winsor.twixt.domain.IGap#getPathDirection(daniel.winsor.twixt.domain.PathType)
      */
     @Override
-    public Direction getPathDirection(PathType path) {
+    public Direction getPathDirection(final PathType path) {
         switch (path) {
         case DIRECT:
             switch (getType()) {
@@ -167,7 +167,7 @@ public final class Gap implements IGap {
     }
     
     @Override
-    public boolean equals(Object compare) {
+    public boolean equals(final Object compare) {
         if (compare == null || compare instanceof Gap == false) {
             return false;
         }

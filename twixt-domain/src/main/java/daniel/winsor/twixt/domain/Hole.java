@@ -1,5 +1,7 @@
 package daniel.winsor.twixt.domain;
 
+import daniel.winsor.twixt.domain.board.BoardManager;
+
 /**
  * A section of the board able to fit 1 Peg into.
  * @author Daniel
@@ -72,7 +74,7 @@ public final class Hole {
      * @param dir
      * @return The Hole that would result if going 1 Link in the dir Direction
      */
-    public Hole getHoleFromDir(Direction dir) {
+    public Hole getHoleFromDir(final Direction dir) {
         if (nullHole.equals(this)) {
             return nullHole;
         }
@@ -98,11 +100,11 @@ public final class Hole {
         }
     }
     
-    public Hole getHoleFromDir(IGap gap) {
+    public Hole getHoleFromDir(final IGap gap) {
         return getHoleFromDir(gap.getDirection(), gap.getType());
     }
     
-    public Hole getHoleFromDir(Direction dir, GapType type) {
+    public Hole getHoleFromDir(final Direction dir, final GapType type) {
         switch (type) {
         case SINGLE:
             return getHoleFromDir(dir);
@@ -124,7 +126,7 @@ public final class Hole {
         return yCoord;
     }
 
-    private void setyCoord(int yCoord) {
+    private void setyCoord(final int yCoord) {
         this.yCoord = yCoord;
     }
 
@@ -132,7 +134,7 @@ public final class Hole {
         return xCoord;
     }
 
-    private void setxCoord(int xCoord) {
+    private void setxCoord(final int xCoord) {
         this.xCoord = xCoord;
     }
     
@@ -148,7 +150,7 @@ public final class Hole {
     }
     
     @Override
-    public boolean equals(Object compare) {
+    public boolean equals(final Object compare) {
         if (compare == null || compare instanceof Hole == false) {
             return false;
         }
@@ -160,6 +162,7 @@ public final class Hole {
     
     @Override
     public int hashCode() {
-        return ((getXCoord() * Constants.MAX_BOARD_SIZE) + getYCoord());
+        return ((getXCoord() * BoardManager.getCurrentBoard().getMaxYSize())
+                + getYCoord());
     }
 }

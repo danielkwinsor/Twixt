@@ -12,7 +12,7 @@ public final class Jump implements IGap {
     private IGap gap;
     private Hole start;
     
-    public Jump(Hole start, IGap gap) {
+    public Jump(final Hole start, final IGap gap) {
         setGap(gap);
         setStart(start);
     }
@@ -20,13 +20,13 @@ public final class Jump implements IGap {
     public IGap getGap() {
         return gap;
     }
-    private void setGap(IGap gap) {
+    private void setGap(final IGap gap) {
         this.gap = gap;
     }
     public Hole getStart() {
         return start;
     }
-    private void setStart(Hole start) {
+    private void setStart(final Hole start) {
         this.start = start;
     }
     
@@ -39,7 +39,7 @@ public final class Jump implements IGap {
                 getGap().getDirection(), getGap().getType());
     }
 
-    public Hole getIntHole(PathType pathType) {
+    public Hole getIntHole(final PathType pathType) {
         Direction direction = getGap().getPathDirection(pathType);
         return getStart().getHoleFromDir(direction);
     }
@@ -48,7 +48,7 @@ public final class Jump implements IGap {
      * Also returns true if it matches the reversed Jump 
      */
     @Override
-    public boolean equals(Object compare) {
+    public boolean equals(final Object compare) {
         if (compare == null || compare instanceof Jump == false) {
             return false;
         }
@@ -89,7 +89,7 @@ public final class Jump implements IGap {
     }
 
     @Override
-    public Direction getPathDirection(PathType path) {
+    public Direction getPathDirection(final PathType path) {
         return getGap().getPathDirection(path);
     }
 

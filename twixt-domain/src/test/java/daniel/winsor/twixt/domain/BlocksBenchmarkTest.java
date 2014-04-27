@@ -3,6 +3,8 @@ package daniel.winsor.twixt.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
+import daniel.winsor.twixt.domain.board.BoardManager;
+
 public class BlocksBenchmarkTest {
     @Test
     public void testBlocksCreation() {
@@ -11,8 +13,8 @@ public class BlocksBenchmarkTest {
             for (GapType gapType : GapType.values()) {
                 for (Direction direction : Direction.values()) {
                     IGap gap = new Gap(gapType, direction);
-                    for (int x = 0; x < Constants.MAX_BOARD_SIZE; ++x) {
-                        for (int y = 0; y < Constants.MAX_BOARD_SIZE; ++y) {
+                    for (int x = 0; x < BoardManager.getCurrentBoard().getMaxXSize(); ++x) {
+                        for (int y = 0; y < BoardManager.getCurrentBoard().getMaxYSize(); ++y) {
                             Hole hole = new Hole(x, y);
                             Jump jump = new Jump(hole, gap);
                             Blocks block = new Blocks(jump);

@@ -38,7 +38,7 @@ public class Blocks {
     private List<Jump> blocks;
     private Jump jumpToBlock;
     
-    public Blocks(Jump jumpToBlock) {
+    public Blocks(final Jump jumpToBlock) {
         setJumpToBlock(jumpToBlock);
 
         if (Jump.nullJump.equals(jumpToBlock)) {
@@ -73,7 +73,7 @@ public class Blocks {
         }
     }
     
-    private void addIfValid(int numPrecedingBlocks, Jump block) {
+    private void addIfValid(final int numPrecedingBlocks, final Jump block) {
         //check if the block is on the board
         //TODO delegate logic to the board
         
@@ -97,7 +97,7 @@ public class Blocks {
         getBlocks().add(block);
     }
     
-    private void addBasicNine(Hole hole, Direction direction) {
+    private void addBasicNine(final Hole hole, final Direction direction) {
         if (Hole.nullHole.equals(hole)) {
             return;
         }
@@ -275,7 +275,7 @@ public class Blocks {
         return blocks;
     }
 
-    private void setBlocks(List<Jump> blocks) {
+    private void setBlocks(final List<Jump> blocks) {
         this.blocks = blocks;
     }
 
@@ -283,12 +283,12 @@ public class Blocks {
         return jumpToBlock;
     }
     
-    private void setJumpToBlock(Jump jumpToBlock) {
+    private void setJumpToBlock(final Jump jumpToBlock) {
         this.jumpToBlock = jumpToBlock;
     }
     
     @Override
-    public boolean equals(Object compare) {
+    public boolean equals(final Object compare) {
         if (compare == null || compare instanceof Gap == false) {
             return false;
         }

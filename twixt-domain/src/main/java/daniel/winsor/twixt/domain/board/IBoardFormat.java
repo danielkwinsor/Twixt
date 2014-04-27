@@ -11,7 +11,9 @@ public interface IBoardFormat {
     
     public abstract int getMaxYSize();
     
-    public abstract boolean isInsideBoard(Hole hole);
+    public abstract boolean isInsideBoard(final Hole hole);
     
-    public abstract boolean isBehindFinishLine(Hole hole, Team team);
+    public abstract boolean isBehindFinishLine(final Hole hole, final Team team);
+    
+    public abstract boolean isValidForTeam(final Hole hole, final Team team);
 }
