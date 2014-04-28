@@ -34,7 +34,7 @@ public class DirectionTest {
                 .rotateLeft().rotateLeft().rotateLeft().rotateLeft()
                 .rotateLeft().rotateLeft());
     }
-
+    
     @Test
     public void testRight() {
         Assert.assertEquals(UP_LEFT, LEFT_UP.rotateRight());
@@ -43,7 +43,7 @@ public class DirectionTest {
         Assert.assertEquals(LEFT_UP, LEFT_DOWN.rotateClockwise());
         Assert.assertEquals(UP_RIGHT, LEFT_UP.rotateRight().rotateRight());
     }
-
+    
     @Test
     public void testNull() {
         Assert.assertEquals(NULL_DIRECTION, NULL_DIRECTION);

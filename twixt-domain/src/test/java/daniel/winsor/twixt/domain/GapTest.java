@@ -36,36 +36,36 @@ public class GapTest {
                 null, null));
         Assert.assertEquals(Gap.nullGap, Gap.getGapFromHoles(
                 Hole.nullHole, new Hole(
-                        Hole.nullHole.getXCoord()+1,
-                        Hole.nullHole.getYCoord()+2)));
+                        Hole.nullHole.getXCoord() + 1,
+                        Hole.nullHole.getYCoord() + 2)));
         Assert.assertEquals(Gap.nullGap, Gap.getGapFromHoles(
-                new Hole(0,0), new Hole(0,0)));
+                new Hole(0, 0), new Hole(0, 0)));
         Assert.assertEquals(Gap.nullGap, Gap.getGapFromHoles(
-                new Hole(0,0), new Hole(0,1)));
+                new Hole(0, 0), new Hole(0, 1)));
         
         
         Assert.assertEquals(new Gap(DOUBLE_DIAMOND, LEFT_UP),
-                Gap.getGapFromHoles(new Hole(4,0), new Hole(0,0)));
+                Gap.getGapFromHoles(new Hole(4, 0), new Hole(0, 0)));
         
         Assert.assertEquals(new Gap(DOUBLE_SHORT_DIAMOND, RIGHT_DOWN),
-                Gap.getGapFromHoles(new Hole(0,0), new Hole(2,0)));
+                Gap.getGapFromHoles(new Hole(0, 0), new Hole(2, 0)));
     }
     
     @Test
     public void testPathDirection() {
-        IGap illegalDirGap = new Gap(DOUBLE_SQUARE, NULL_DIRECTION);
+        final IGap illegalDirGap = new Gap(DOUBLE_SQUARE, NULL_DIRECTION);
         Assert.assertEquals(NULL_DIRECTION, illegalDirGap.getPathDirection(DIRECT));
         Assert.assertEquals(NULL_DIRECTION, illegalDirGap.getPathDirection(RIGHT));
         
-        IGap illegalTypeGap = new Gap(NULL_GAP_TYPE, LEFT_UP);
+        final IGap illegalTypeGap = new Gap(NULL_GAP_TYPE, LEFT_UP);
         Assert.assertEquals(NULL_DIRECTION, illegalTypeGap.getPathDirection(DIRECT));
         Assert.assertEquals(NULL_DIRECTION, illegalTypeGap.getPathDirection(RIGHT));
         
-        IGap singleGap = new Gap(SINGLE, LEFT_UP);
+        final IGap singleGap = new Gap(SINGLE, LEFT_UP);
         Assert.assertEquals(LEFT_UP, singleGap.getPathDirection(DIRECT));
         Assert.assertEquals(NULL_DIRECTION, singleGap.getPathDirection(RIGHT));
         
-        IGap doubleGap = new Gap(DOUBLE_SQUARE, LEFT_UP);
+        final IGap doubleGap = new Gap(DOUBLE_SQUARE, LEFT_UP);
         Assert.assertEquals(NULL_DIRECTION, doubleGap.getPathDirection(DIRECT));
         Assert.assertEquals(LEFT_DOWN, doubleGap.getPathDirection(LEFT));
         Assert.assertEquals(UP_LEFT, doubleGap.getPathDirection(RIGHT));

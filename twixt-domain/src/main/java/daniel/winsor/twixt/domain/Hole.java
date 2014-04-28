@@ -8,13 +8,13 @@ import daniel.winsor.twixt.domain.board.BoardManager;
  *
  */
 public final class Hole {
-    private static final int nullValue = -99;
+    private static final int NULL_VALUE = -99;
     /**
      * Hole(-1,-1) might not be good enough, Hole(-1,-1) (invalid)
-     *  can reach Hole(0,1) (valid) in just 1 jump.
-     *  So nullHole is Hole(nullValue, nullValue)
+     * can reach Hole(0,1) (valid) in just 1 jump.
+     * So nullHole is Hole(nullValue, nullValue)
      */
-    public static final Hole nullHole = new Hole(nullValue, nullValue);
+    public static final Hole nullHole = new Hole(NULL_VALUE, NULL_VALUE);
     private int xCoord;
     private int yCoord;
     
@@ -44,26 +44,26 @@ public final class Hole {
             init((xChar - 'A'), yCoord);
             return;
         }
-        init(nullValue, nullValue);
+        init(NULL_VALUE, NULL_VALUE);
     }
     
     private void init(final String string) {
         if (string == null || string.length() < 2) {
-            init(nullValue, nullValue);
+            init(NULL_VALUE, NULL_VALUE);
             return;
         }
         
-        char xChar = string.charAt(0);
-        int yCoord = nullValue;
+        final char xChar = string.charAt(0);
+        int yCoord = NULL_VALUE;
         try {
             //these numbers are not 0 based
             yCoord = Integer.parseInt(string.substring(1));
             --yCoord;
         }
-        catch (NumberFormatException e) {
+        catch (final NumberFormatException e) {
             //e.printStackTrace();
             //TODO: logger
-            init(nullValue, nullValue);
+            init(NULL_VALUE, NULL_VALUE);
             return;
         }
         init(xChar, yCoord);
@@ -80,21 +80,21 @@ public final class Hole {
         }
         switch (dir) {
         case LEFT_UP:
-            return new Hole(getXCoord()-2, getYCoord()-1);
+            return new Hole(getXCoord() - 2, getYCoord() - 1);
         case UP_LEFT:
-            return new Hole(getXCoord()-1, getYCoord()-2);
+            return new Hole(getXCoord() - 1, getYCoord() - 2);
         case UP_RIGHT:
-            return new Hole(getXCoord()+1, getYCoord()-2);
+            return new Hole(getXCoord() + 1, getYCoord() - 2);
         case RIGHT_UP:
-            return new Hole(getXCoord()+2, getYCoord()-1);
+            return new Hole(getXCoord() + 2, getYCoord() - 1);
         case RIGHT_DOWN:
-            return new Hole(getXCoord()+2, getYCoord()+1);
+            return new Hole(getXCoord() + 2, getYCoord() + 1);
         case DOWN_RIGHT:
-            return new Hole(getXCoord()+1, getYCoord()+2);
+            return new Hole(getXCoord() + 1, getYCoord() + 2);
         case DOWN_LEFT:
-            return new Hole(getXCoord()-1, getYCoord()+2);
+            return new Hole(getXCoord() - 1, getYCoord() + 2);
         case LEFT_DOWN:
-            return new Hole(getXCoord()-2, getYCoord()+1);
+            return new Hole(getXCoord() - 2, getYCoord() + 1);
         default:
             return nullHole;
         }
@@ -109,13 +109,17 @@ public final class Hole {
         case SINGLE:
             return getHoleFromDir(dir);
         case DOUBLE_DIAMOND:
-            return getHoleFromDir(dir).getHoleFromDir(dir.rotateLeft());
+            return getHoleFromDir(dir)
+                    .getHoleFromDir(dir.rotateLeft());
         case DOUBLE_SQUARE:
-            return getHoleFromDir(dir.rotateLeft()).getHoleFromDir(dir.rotateRight());
+            return getHoleFromDir(dir.rotateLeft())
+                    .getHoleFromDir(dir.rotateRight());
         case DOUBLE_SHORT_DIAMOND:
-            return getHoleFromDir(dir.rotateLeft().rotateLeft()).getHoleFromDir(dir.rotateRight());
+            return getHoleFromDir(dir.rotateLeft().rotateLeft())
+                    .getHoleFromDir(dir.rotateRight());
         case DOUBLE_STRAIGHT:
-            return getHoleFromDir(dir).getHoleFromDir(dir);
+            return getHoleFromDir(dir)
+                    .getHoleFromDir(dir);
         default:
             break;
         }
@@ -125,22 +129,22 @@ public final class Hole {
     public int getYCoord() {
         return yCoord;
     }
-
+    
     private void setyCoord(final int yCoord) {
         this.yCoord = yCoord;
     }
-
+    
     public int getXCoord() {
         return xCoord;
     }
-
+    
     private void setxCoord(final int xCoord) {
         this.xCoord = xCoord;
     }
     
     @Override
     public String toString() {
-        char xChar = (char) (this.getXCoord() + 'A');
+        final char xChar = (char) (this.getXCoord() + 'A');
         String xString = Character.toString(xChar);
         if (xChar < 'A' || xChar > 'X') {
             xString = Integer.toString(this.getXCoord());
@@ -155,7 +159,7 @@ public final class Hole {
             return false;
         }
         
-        Hole other = (Hole) compare;
+        final Hole other = (Hole) compare;
         return (getXCoord() == other.getXCoord()
                 && getYCoord() == other.getYCoord());
     }

@@ -10,6 +10,9 @@ import static daniel.winsor.twixt.domain.Direction.*;
  *
  */
 public final class Gap implements IGap {
+    /**
+     * Immutable object that represents a null value.
+     */
     public static final IGap nullGap = new Gap(NULL_GAP_TYPE, NULL_DIRECTION);
     private GapType type;
     private Direction direction;
@@ -43,9 +46,6 @@ public final class Gap implements IGap {
         this.type = type;
     }
     
-    /* (non-Javadoc)
-     * @see daniel.winsor.twixt.domain.IGap#getPathDirection(daniel.winsor.twixt.domain.PathType)
-     */
     @Override
     public Direction getPathDirection(final PathType path) {
         switch (path) {
@@ -101,17 +101,16 @@ public final class Gap implements IGap {
         return new Gap(getType(), getDirection().getOpposite());
     }
     
-    public static IGap getGapFromHoles(final Hole start, final Hole dest)
-    {
-        GapType gapType = GapType.getGapType(start, dest);
+    public static IGap getGapFromHoles(final Hole start, final Hole dest) {
+        final GapType gapType = GapType.getGapType(start, dest);
         if (gapType == NULL_GAP_TYPE) {
             return nullGap;
         }
         
-        int changeX = start.getXCoord() - dest.getXCoord();
-        int changeY = start.getYCoord() - dest.getYCoord();
-        int absX = Math.abs(changeX);
-        int absY = Math.abs(changeY);
+        final int changeX = start.getXCoord() - dest.getXCoord();
+        final int changeY = start.getYCoord() - dest.getYCoord();
+        final int absX = Math.abs(changeX);
+        final int absY = Math.abs(changeY);
         boolean left = changeX >= 0;
         boolean up = changeY >= 0;
         
@@ -172,7 +171,7 @@ public final class Gap implements IGap {
             return false;
         }
         
-        IGap other = (IGap) compare;
+        final IGap other = (IGap) compare;
         return (getType().equals(other.getType())
                 && getDirection().equals(other.getDirection()));
     }

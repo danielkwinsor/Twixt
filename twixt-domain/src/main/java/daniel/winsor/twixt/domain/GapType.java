@@ -33,8 +33,7 @@ public enum GapType {
         return this != SINGLE && this != NULL_GAP_TYPE;
     }
     
-    public static GapType getGapType(final Hole start, final Hole dest)
-    {
+    public static GapType getGapType(final Hole start, final Hole dest) {
         if (start == null || dest == null) {
             return NULL_GAP_TYPE;
         }
@@ -42,10 +41,9 @@ public enum GapType {
             return NULL_GAP_TYPE;
         }
         
-        int x = Math.abs(start.getXCoord() - dest.getXCoord());
-        int y = Math.abs(start.getYCoord() - dest.getYCoord());
-        switch (x + y)
-        {
+        final int x = Math.abs(start.getXCoord() - dest.getXCoord());
+        final int y = Math.abs(start.getYCoord() - dest.getYCoord());
+        switch (x + y) {
         case 0:
         case 1:
             return NULL_GAP_TYPE;

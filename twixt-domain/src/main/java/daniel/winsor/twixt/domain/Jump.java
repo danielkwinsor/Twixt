@@ -1,13 +1,16 @@
 package daniel.winsor.twixt.domain;
 
 /**
- * A Jump represents going from one Hole to another 
+ * A Jump represents going from one Hole to another
  * in one of the special "moves" that may take 2 or 3 pegs,
  * with 1 or 2 (or 3 or 4) links inbetween.
  * @author Daniel
  *
  */
 public final class Jump implements IGap {
+    /**
+     * Immutable object that represents a null value.
+     */
     public static final Jump nullJump = new Jump(Hole.nullHole, Gap.nullGap);
     private IGap gap;
     private Hole start;
@@ -20,12 +23,15 @@ public final class Jump implements IGap {
     public IGap getGap() {
         return gap;
     }
+    
     private void setGap(final IGap gap) {
         this.gap = gap;
     }
+    
     public Hole getStart() {
         return start;
     }
+    
     private void setStart(final Hole start) {
         this.start = start;
     }
@@ -38,14 +44,14 @@ public final class Jump implements IGap {
         return getStart().getHoleFromDir(
                 getGap().getDirection(), getGap().getType());
     }
-
+    
     public Hole getIntHole(final PathType pathType) {
-        Direction direction = getGap().getPathDirection(pathType);
+        final Direction direction = getGap().getPathDirection(pathType);
         return getStart().getHoleFromDir(direction);
     }
     
     /**
-     * Also returns true if it matches the reversed Jump 
+     * Also returns true if it matches the reversed Jump
      */
     @Override
     public boolean equals(final Object compare) {
@@ -53,7 +59,7 @@ public final class Jump implements IGap {
             return false;
         }
         
-        Jump other = (Jump) compare;
+        final Jump other = (Jump) compare;
         if (getGap().equals(other.getGap())) {
             if (getStart().equals(other.getStart())) {
                 return true;
@@ -77,22 +83,22 @@ public final class Jump implements IGap {
     public String toString() {
         return "Jump(" + getStart() + ", " + getGap() + ")";
     }
-
+    
     @Override
     public Direction getDirection() {
         return getGap().getDirection();
     }
-
+    
     @Override
     public GapType getType() {
         return getGap().getType();
     }
-
+    
     @Override
     public Direction getPathDirection(final PathType path) {
         return getGap().getPathDirection(path);
     }
-
+    
     @Override
     public IGap getReversedGap() {
         return getGap().getReversedGap();

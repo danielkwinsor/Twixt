@@ -1,5 +1,10 @@
 package daniel.winsor.twixt.domain;
 
+/**
+ * TODO decide on colors (is it w/b or r/b?).  Decide on better names.
+ * @author Daniel
+ *
+ */
 public enum Team {
     //TODO better names
     LEFT_RIGHT,

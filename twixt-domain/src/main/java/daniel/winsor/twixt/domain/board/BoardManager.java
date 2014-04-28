@@ -6,7 +6,7 @@ package daniel.winsor.twixt.domain.board;
  *
  */
 public class BoardManager {
-    public static IBoardFormat board = new StandardBoard();
+    private static IBoardFormat board = new SquareBoard(BoardType.STANDARD_24);
     
     public static IBoardFormat getCurrentBoard() {
         return board;

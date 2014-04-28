@@ -3,17 +3,21 @@ package daniel.winsor.twixt.domain.board;
 import daniel.winsor.twixt.domain.Hole;
 import daniel.winsor.twixt.domain.Team;
 
-
+/**
+ * Boards
+ * @author Daniel
+ *
+ */
 public interface IBoardFormat {
-    public abstract BoardType getBoardType();
+    BoardType getBoardType();
     
-    public abstract int getMaxXSize();
+    int getMaxXSize();
     
-    public abstract int getMaxYSize();
+    int getMaxYSize();
     
-    public abstract boolean isInsideBoard(final Hole hole);
+    boolean isInsideBoard(final Hole hole);
     
-    public abstract boolean isBehindFinishLine(final Hole hole, final Team team);
+    boolean isBehindFinishLine(final Hole hole, final Team team);
     
-    public abstract boolean isValidForTeam(final Hole hole, final Team team);
+    boolean isValidForTeam(final Hole hole, final Team team);
 }

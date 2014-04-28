@@ -1,14 +1,18 @@
 package daniel.winsor.twixt.domain;
 
-
+/**
+ * Represents the pattern of a particular move type.
+ * @author Daniel
+ *
+ */
 public interface IGap {
     
-    public abstract Direction getDirection();
+    Direction getDirection();
     
-    public abstract GapType getType();
+    GapType getType();
     
-    public abstract Direction getPathDirection(final PathType path);
+    Direction getPathDirection(final PathType path);
     
-    public abstract IGap getReversedGap();
+    IGap getReversedGap();
     
 }
