@@ -1,23 +1,23 @@
 package daniel.winsor.twixt.domain;
 
 /**
- * TODO decide on colors (is it w/b or r/b?).  Decide on better names.
+ * The adopted convention is that black connects left to right
+ * and red connects up and down
  * @author Daniel
  *
  */
 public enum Team {
-    //TODO better names
-    LEFT_RIGHT,
-    UP_DOWN,
+    RED,
+    BLACK,
     UNOWNED,
     NULL_TEAM;
     
     public Team getOpponent() {
         switch (this) {
-        case LEFT_RIGHT:
-            return UP_DOWN;
-        case UP_DOWN:
-            return LEFT_RIGHT;
+        case RED:
+            return BLACK;
+        case BLACK:
+            return RED;
         default:
             return NULL_TEAM;
         }

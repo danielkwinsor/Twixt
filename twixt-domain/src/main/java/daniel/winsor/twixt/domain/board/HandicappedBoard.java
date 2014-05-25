@@ -1,34 +1,43 @@
 package daniel.winsor.twixt.domain.board;
 
-import daniel.winsor.twixt.domain.Hole;
-import daniel.winsor.twixt.domain.Team;
+import daniel.winsor.twixt.domain.*;
 
 /**
  * Can only handicap regular square boards.
  * Delegates to the wrapped board, except for MaxSize calls.
  * For MaxSize calls, will make the call once when HandicappedBoard
- * is created, ADD a handicap, and store result for later.
+ * is created, SUBTRACT a handicap, and store result for later.
  * @author Daniel
  *
  */
-public class HandicappedBoard implements IBoardFormat {
-    protected IBoardFormat boardToHandicap;
+public class HandicappedBoard implements IBoard {
+    protected IBoard boardToHandicap;
     protected int handicappedXSize;
     protected int handicappedYSize;
     
-    public HandicappedBoard(final IBoardFormat boardToHandicap,
+    public HandicappedBoard(final IBoard boardToHandicap,
             final int xHandicap, final int yHandicap) {
         setBoardToHandicap(boardToHandicap);
-        if (getBoard().getBoardType().isRegularSquare()) {
-            setHandicappedXSize(boardToHandicap.getMaxXSize() + xHandicap);
-            setHandicappedYSize(boardToHandicap.getMaxYSize() + yHandicap);
-        }
-        else {
+        
+        //if we fail the checks below, then the handicapped board
+        //is still usable as a regular board that just
+        //delegates all calls.  Therefore, return instead of throw
+        
+        if (!getBoard().getBoardType().isRegularSquare()) {
             //TODO logger warning
+            return;
         }
+        if (xHandicap < 0 || boardToHandicap.getMaxXSize() >= xHandicap
+                || yHandicap < 0 || boardToHandicap.getMaxYSize() >= yHandicap) {
+            //TODO logger warning
+            return;
+        }
+        
+        setHandicappedXSize(boardToHandicap.getMaxXSize() - xHandicap);
+        setHandicappedYSize(boardToHandicap.getMaxYSize() - yHandicap);
     }
     
-    protected void setBoardToHandicap(final IBoardFormat boardToHandicap) {
+    protected void setBoardToHandicap(final IBoard boardToHandicap) {
         this.boardToHandicap = boardToHandicap;
     }
     
@@ -40,7 +49,7 @@ public class HandicappedBoard implements IBoardFormat {
         this.handicappedYSize = handicappedYSize;
     }
     
-    protected IBoardFormat getBoard() {
+    protected IBoard getBoard() {
         return boardToHandicap;
     }
     
@@ -72,5 +81,10 @@ public class HandicappedBoard implements IBoardFormat {
     @Override
     public boolean isValidForTeam(final Hole hole, final Team team) {
         return getBoard().isValidForTeam(hole, team);
+    }
+
+    @Override
+    public Peg getPeg(Hole hole) {
+        return getBoard().getPeg(hole);
     }
 }

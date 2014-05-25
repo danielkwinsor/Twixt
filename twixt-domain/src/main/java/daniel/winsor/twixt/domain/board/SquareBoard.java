@@ -6,7 +6,7 @@ package daniel.winsor.twixt.domain.board;
  * @author Daniel
  *
  */
-public class SquareBoard extends AbstractBoard implements IBoardFormat {
+public class SquareBoard extends AbstractBoard implements IBoard {
     public SquareBoard(BoardType boardType) {
         super(boardType);
         if (!boardType.isRegularSquare()) {

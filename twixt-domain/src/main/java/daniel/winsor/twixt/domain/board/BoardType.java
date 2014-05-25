@@ -14,6 +14,11 @@ public enum BoardType {
     DIAGONAL_45_DEGREES(24),
     IMURI_30(30);
     
+    /**
+     * The board is not supposed to go over this size
+     */
+    public static final int MAX_SIZE = HUGE_36.getDefaultSize();
+    
     private final int defaultSize;
     
     BoardType(int defaultSize) {

@@ -1,18 +1,37 @@
 package daniel.winsor.twixt.domain.board;
 
-import daniel.winsor.twixt.domain.Hole;
-import daniel.winsor.twixt.domain.Team;
+import java.util.*;
+
+import daniel.winsor.twixt.domain.*;
 
 /**
  * Does most of the work of handling logic common to all boards.
  * @author Daniel
  *
  */
-public abstract class AbstractBoard implements IBoardFormat {
+public abstract class AbstractBoard implements IBoard {
     protected final BoardType boardType;
+    protected final List<Peg> pegs;
 
     public AbstractBoard(BoardType boardType) {
         this.boardType = boardType;
+        pegs = new ArrayList<Peg>(
+                boardType.getDefaultSize() * boardType.getDefaultSize());
+        for (int x = 0; x < boardType.getDefaultSize(); ++x) {
+            for (int y = 0; y < boardType.getDefaultSize(); ++y) {
+                pegs.add(new Peg(new Hole(x, y), Team.UNOWNED));
+            }
+        }
+    }
+    
+    public Peg getPeg(final Hole hole) {
+        try {
+            return pegs.get(hole.getXCoord() * boardType.getDefaultSize()
+                    + hole.getYCoord());
+        }
+        catch (IndexOutOfBoundsException e) {
+            return Peg.nullPeg;
+        }
     }
     
     @Override
@@ -39,10 +58,9 @@ public abstract class AbstractBoard implements IBoardFormat {
         final int y = hole.getYCoord();
         if (x >= 0 && x < getMaxXSize()) {
             if (y >= 0 && y < getMaxYSize()) {
-                if (isCornerHole(hole)) {
-                    return false;
+                if (!isCornerHole(hole)) {
+                    return true;
                 }
-                return true;
             }
         }
         return false;
@@ -51,12 +69,14 @@ public abstract class AbstractBoard implements IBoardFormat {
     @Override
     public boolean isBehindFinishLine(final Hole hole, final Team team) {
         switch (team) {
-        case LEFT_RIGHT:
-            return (hole.getXCoord() == 0
-                    || hole.getXCoord() == getMaxXSize() - 1);
-        case UP_DOWN:
-            return (hole.getYCoord() == 0
-                    || hole.getYCoord() == getMaxYSize() - 1);
+        case RED:
+            return ((hole.getXCoord() == 0
+                    || hole.getXCoord() == getMaxXSize() - 1)
+                    && isCornerHole(hole) == false);
+        case BLACK:
+            return ((hole.getYCoord() == 0
+                    || hole.getYCoord() == getMaxYSize() - 1)
+                    && isCornerHole(hole) == false);
         default:
             return false;
         }

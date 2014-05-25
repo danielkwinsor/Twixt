@@ -9,13 +9,21 @@ import org.junit.Test;
 public class BlocksTest {
     @Test
     public void testBlocks() {
-        //DOUBLE_SHORT_DIAMONDs will be the same
         Blocks block = new Blocks(new Jump(
                 new Hole(6, 6), new Gap(DOUBLE_DIAMOND, LEFT_UP)));
         Assert.assertEquals(32, block.getBlocks().size());
         
         block = new Blocks(new Jump(
                 new Hole(6, 6), new Gap(DOUBLE_DIAMOND, UP_LEFT)));
+        Assert.assertEquals(28, block.getBlocks().size());
+        
+        //DOUBLE_SHORT_DIAMONDs will be the same
+        block = new Blocks(new Jump(
+                new Hole(6, 6), new Gap(DOUBLE_SHORT_DIAMOND, LEFT_UP)));
+        Assert.assertEquals(32, block.getBlocks().size());
+        
+        block = new Blocks(new Jump(
+                new Hole(6, 6), new Gap(DOUBLE_SHORT_DIAMOND, UP_LEFT)));
         Assert.assertEquals(28, block.getBlocks().size());
         
         block = new Blocks(new Jump(

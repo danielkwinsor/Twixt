@@ -8,7 +8,20 @@ package daniel.winsor.twixt.domain;
 public class Peg {
     private Hole hole;
     private Team owner;
+    private boolean[] linkedDirs = new boolean[Direction.NUM_DIRECTIONS];
+    private boolean[] blockedDirs = new boolean[Direction.NUM_DIRECTIONS];
+         
+    /**
+     * Object that represents a null value.
+     * Warning, this is mutable, do not change it
+     */
+    public static final Peg nullPeg = new Peg(Hole.nullHole, Team.NULL_TEAM);
     
+    public Peg(final Hole hole, final Team owner) {
+        setHole(hole);
+        setOwner(owner);
+    }
+
     public Hole getHole() {
         return hole;
     }
@@ -23,5 +36,29 @@ public class Peg {
     
     public void setOwner(final Team owner) {
         this.owner = owner;
+    }
+    
+    public boolean isLinked(Direction direction) {
+        return linkedDirs[direction.ordinal()];
+    }
+    
+    public boolean isBlocked(Direction direction) {
+        return blockedDirs[direction.ordinal()];
+    }
+    
+    public void addBlock(Direction direction) {
+        blockedDirs[direction.ordinal()] = true;
+    }
+    
+    public void removeBlock(Direction direction) {
+        blockedDirs[direction.ordinal()] = false;
+    }
+    
+    public void addLink(Direction direction) {
+        linkedDirs[direction.ordinal()] = true;
+    }
+    
+    public void removeLink(Direction direction) {
+        linkedDirs[direction.ordinal()] = false;
     }
 }

@@ -4,7 +4,7 @@ import daniel.winsor.twixt.domain.Hole;
 import daniel.winsor.twixt.domain.Team;
 
 /**
- * Boards
+ * Boards follow a certain format defined by this
  * @author Daniel
  *
  */

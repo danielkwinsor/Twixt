@@ -1,6 +1,6 @@
 package daniel.winsor.twixt.domain;
 
-import daniel.winsor.twixt.domain.board.BoardManager;
+import daniel.winsor.twixt.domain.board.*;
 
 /**
  * A section of the board able to fit 1 Peg into.
@@ -166,7 +166,8 @@ public final class Hole {
     
     @Override
     public int hashCode() {
-        return ((getXCoord() * BoardManager.getCurrentBoard().getMaxYSize())
-                + getYCoord());
+        return ((getXCoord() * BoardType.MAX_SIZE) + getYCoord());
+//        return ((getXCoord() * BoardManager.getCurrentBoard().getMaxYSize())
+//                + getYCoord());
     }
 }
