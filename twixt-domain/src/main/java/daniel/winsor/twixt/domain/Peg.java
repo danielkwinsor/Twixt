@@ -1,5 +1,7 @@
 package daniel.winsor.twixt.domain;
 
+import daniel.winsor.twixt.domain.board.*;
+
 /**
  * A game piece that has been placed onto the board in a Hole.
  * @author Daniel
@@ -60,5 +62,27 @@ public class Peg {
     
     public void removeLink(Direction direction) {
         linkedDirs[direction.ordinal()] = false;
+    }
+    
+    @Override
+    public String toString() {
+        return "Peg: " + getHole() + " " + getOwner();
+    }
+    
+    @Override
+    public boolean equals(final Object compare) {
+        if (compare == null || compare instanceof Peg == false) {
+            return false;
+        }
+        
+        final Peg other = (Peg) compare;
+        return (getHole().equals(other.getHole())
+                && getOwner().equals(other.getOwner()));
+    }
+    
+    @Override
+    public int hashCode() {
+        return ((getHole().hashCode() * Team.values().length)
+                + getOwner().ordinal());
     }
 }

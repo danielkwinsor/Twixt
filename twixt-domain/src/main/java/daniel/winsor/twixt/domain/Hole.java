@@ -18,14 +18,28 @@ public final class Hole {
     private int xCoord;
     private int yCoord;
     
+    /**
+     * 0 based coords
+     * @param xCoord
+     * @param yCoord
+     */
     public Hole(final int xCoord, final int yCoord) {
         init(xCoord, yCoord);
     }
     
+    /**
+     * lower case characters are accepted
+     * @param xChar 'A' through 'X'
+     * @param yCoord 0 based
+     */
     public Hole(final char xChar, final int yCoord) {
         init(xChar, yCoord);
     }
     
+    /**
+     * NOT 0 based
+     * @param string "A1" through "A24" through "X24"
+     */
     public Hole(final String string) {
         init(string);
     }
