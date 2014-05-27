@@ -14,6 +14,7 @@ public class HandicappedBoard implements IBoard {
     protected IBoard boardToHandicap;
     protected int handicappedXSize;
     protected int handicappedYSize;
+    private boolean isHandicapped = false;
     
     public HandicappedBoard(final IBoard boardToHandicap,
             final int xHandicap, final int yHandicap) {
@@ -33,6 +34,7 @@ public class HandicappedBoard implements IBoard {
             return;
         }
         
+        isHandicapped = true;
         setHandicappedXSize(boardToHandicap.getMaxXSize() - xHandicap);
         setHandicappedYSize(boardToHandicap.getMaxYSize() - yHandicap);
     }
@@ -85,6 +87,13 @@ public class HandicappedBoard implements IBoard {
 
     @Override
     public Peg getPeg(Hole hole) {
-        return getBoard().getPeg(hole);
+        if (isInsideBoard(hole)) {
+            return getBoard().getPeg(hole);
+        }
+        return Peg.nullPeg;
+    }
+    
+    public boolean isHandicapped() {
+        return isHandicapped;
     }
 }

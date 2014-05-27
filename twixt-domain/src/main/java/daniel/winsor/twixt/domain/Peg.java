@@ -1,29 +1,33 @@
 package daniel.winsor.twixt.domain;
 
-import daniel.winsor.twixt.domain.board.*;
-
 /**
  * A game piece that has been placed onto the board in a Hole.
  * @author Daniel
  *
  */
 public class Peg {
-    private Hole hole;
-    private Team owner;
-    private boolean[] linkedDirs = new boolean[Direction.NUM_DIRECTIONS];
-    private boolean[] blockedDirs = new boolean[Direction.NUM_DIRECTIONS];
-         
+    protected Hole hole;
+    protected Team owner;
+    protected boolean[] linkedDirs = new boolean[Direction.NUM_DIRECTIONS];
+    protected boolean[] blockedDirs = new boolean[Direction.NUM_DIRECTIONS];
+    
     /**
-     * Object that represents a null value.
-     * Warning, this is mutable, do not change it
+     * Immutable object that represents a null value.
      */
-    public static final Peg nullPeg = new Peg(Hole.nullHole, Team.NULL_TEAM);
+    public static final Peg nullPeg =
+            new ImmutablePeg(Hole.nullHole, Team.NULL_TEAM);
     
     public Peg(final Hole hole, final Team owner) {
         setHole(hole);
         setOwner(owner);
     }
 
+    public Peg(final Peg peg) {
+        this(peg.getHole(), peg.getOwner());
+        this.linkedDirs = peg.linkedDirs.clone();
+        this.blockedDirs = peg.blockedDirs.clone();
+    }
+    
     public Hole getHole() {
         return hole;
     }
@@ -69,6 +73,9 @@ public class Peg {
         return "Peg: " + getHole() + " " + getOwner();
     }
     
+    /**
+     * This equals does not compare the links or blocks
+     */
     @Override
     public boolean equals(final Object compare) {
         if (compare == null || compare instanceof Peg == false) {

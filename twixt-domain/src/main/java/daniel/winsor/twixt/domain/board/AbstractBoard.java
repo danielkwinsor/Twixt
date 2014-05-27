@@ -9,14 +9,15 @@ import daniel.winsor.twixt.domain.board.data.*;
  *
  */
 public abstract class AbstractBoard implements IBoard {
-    protected final BoardType boardType;
-    protected final ArrayPegData pegs;
+    private final BoardType boardType;
+    private final ArrayPegData pegs;
 
     public AbstractBoard(BoardType boardType) {
         this.boardType = boardType;
         pegs = new ArrayPegData(boardType);
     }
     
+    @Override
     public Peg getPeg(final Hole hole) {
         return pegs.getPeg(hole);
     }

@@ -85,7 +85,7 @@ public class Diagonal30Board extends DiagonalBoard implements IBoard {
         for (Hole hole : getLeftRightFinishLine()) {
             //the coords are just rotated
             finishLineHoles.add(
-                    new Hole(23 - hole.getYCoord(), hole.getXCoord()));
+                    getBoardType().rotateClockwiseAboutBoard(hole));
         }
         return finishLineHoles;
     }

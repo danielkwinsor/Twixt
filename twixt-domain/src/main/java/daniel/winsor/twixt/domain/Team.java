@@ -7,7 +7,13 @@ package daniel.winsor.twixt.domain;
  *
  */
 public enum Team {
+    /**
+     * By convention, connects up and down
+     */
     RED,
+    /**
+     * By convention, connects left and right
+     */
     BLACK,
     UNOWNED,
     NULL_TEAM;
